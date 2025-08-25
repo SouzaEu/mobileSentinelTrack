@@ -19,7 +19,7 @@ const montserrat = Montserrat({
 export const metadata = {
   title: "SentinelTrack - Dashboard do Projeto",
   description: "Sistema de monitoramento inteligente de motos Mottu com IA",
-    generator: 'v0.app'
+    generator: 'SentinelTrack'
 }
 
 export default function RootLayout({
