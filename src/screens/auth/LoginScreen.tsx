@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { VALIDATION_RULES } from "../../constants"
 import {
   View,
   Text,
@@ -24,15 +25,22 @@ export function LoginScreen({ navigation }: any) {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
+  const isEmailValid = VALIDATION_RULES.email.test(email)
+  const isPasswordValid = password.length >= VALIDATION_RULES.password.minLength
+  const isFormValid = isEmailValid && isPasswordValid
+
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos")
+    if (!isFormValid) {
+      const messages = [] as string[]
+      if (!isEmailValid) messages.push("Email inválido")
+      if (!isPasswordValid) messages.push(`Senha com no mínimo ${VALIDATION_RULES.password.minLength} caracteres`)
+      Alert.alert("Erro", messages.join("\n"))
       return
     }
 
     setIsLoading(true)
     try {
-      const success = await login(email, password)
+      const success = await login(email.trim(), password)
       if (!success) {
         Alert.alert("Erro", "Email ou senha incorretos")
       }
@@ -181,9 +189,9 @@ export function LoginScreen({ navigation }: any) {
           </View>
 
           <TouchableOpacity
-            style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+            style={[styles.loginButton, (isLoading || !isFormValid) && styles.loginButtonDisabled]}
             onPress={handleLogin}
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid}
           >
             <Text style={styles.loginButtonText}>{isLoading ? "Entrando..." : "Entrar"}</Text>
           </TouchableOpacity>

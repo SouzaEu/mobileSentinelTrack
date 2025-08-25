@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { VALIDATION_RULES } from "../../constants"
 import {
   View,
   Text,
@@ -27,25 +28,26 @@ export function RegisterScreen({ navigation }: any) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
+  const isNameValid = name.trim().length > 2
+  const isEmailValid = VALIDATION_RULES.email.test(email)
+  const isPasswordValid = password.length >= VALIDATION_RULES.password.minLength
+  const isConfirmValid = confirmPassword === password
+  const isFormValid = isNameValid && isEmailValid && isPasswordValid && isConfirmValid
+
   const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos")
-      return
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert("Erro", "As senhas não coincidem")
-      return
-    }
-
-    if (password.length < 6) {
-      Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres")
+    if (!isFormValid) {
+      const messages = [] as string[]
+      if (!isNameValid) messages.push("Nome muito curto")
+      if (!isEmailValid) messages.push("Email inválido")
+      if (!isPasswordValid) messages.push(`Senha com no mínimo ${VALIDATION_RULES.password.minLength} caracteres`)
+      if (!isConfirmValid) messages.push("As senhas não coincidem")
+      Alert.alert("Erro", messages.join("\n"))
       return
     }
 
     setIsLoading(true)
     try {
-      const success = await register(email, password, name)
+      const success = await register(email.trim(), password, name.trim())
       if (!success) {
         Alert.alert("Erro", "Não foi possível criar a conta")
       }
@@ -216,9 +218,9 @@ export function RegisterScreen({ navigation }: any) {
           </View>
 
           <TouchableOpacity
-            style={[styles.registerButton, isLoading && styles.registerButtonDisabled]}
+            style={[styles.registerButton, (isLoading || !isFormValid) && styles.registerButtonDisabled]}
             onPress={handleRegister}
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid}
           >
             <Text style={styles.registerButtonText}>{isLoading ? "Criando conta..." : "Criar conta"}</Text>
           </TouchableOpacity>

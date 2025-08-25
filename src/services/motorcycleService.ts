@@ -1,6 +1,6 @@
 import { apiClient } from "./api"
+import { API_ENDPOINTS, USE_MOCKS } from "../constants"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-const USE_MOCKS = process.env.EXPO_PUBLIC_USE_MOCKS === "true"
 
 export interface Motorcycle {
   id: string
@@ -66,7 +66,7 @@ class MotorcycleService {
         return mockData
       }
 
-      const response = await apiClient.get<Motorcycle[]>("/motorcycles")
+      const response = await apiClient.get<Motorcycle[]>(API_ENDPOINTS.motorcycles.base)
 
       if (response.success && response.data) {
         await this.cacheMotorcycles(response.data)
@@ -92,7 +92,7 @@ class MotorcycleService {
         return motorcycle
       }
 
-      const response = await apiClient.get<Motorcycle>(`/motorcycles/${id}`)
+      const response = await apiClient.get<Motorcycle>(API_ENDPOINTS.motorcycles.byId(id))
 
       if (response.success && response.data) {
         return response.data
@@ -111,7 +111,7 @@ class MotorcycleService {
         return this.mockCreateMotorcycle(data)
       }
 
-      const response = await apiClient.post<Motorcycle>("/motorcycles", data)
+      const response = await apiClient.post<Motorcycle>(API_ENDPOINTS.motorcycles.base, data)
 
       if (response.success && response.data) {
         // Invalidar cache
@@ -132,7 +132,7 @@ class MotorcycleService {
         return this.mockUpdateMotorcycle(id, data)
       }
 
-      const response = await apiClient.put<Motorcycle>(`/motorcycles/${id}`, data)
+      const response = await apiClient.put<Motorcycle>(API_ENDPOINTS.motorcycles.byId(id), data)
 
       if (response.success && response.data) {
         // Invalidar cache
@@ -154,7 +154,7 @@ class MotorcycleService {
         return
       }
 
-      const response = await apiClient.delete(`/motorcycles/${id}`)
+      const response = await apiClient.delete(API_ENDPOINTS.motorcycles.byId(id))
 
       if (response.success) {
         // Invalidar cache
@@ -175,7 +175,7 @@ class MotorcycleService {
         return this.getMockAlerts()
       }
 
-      const response = await apiClient.get<Alert[]>("/alerts")
+      const response = await apiClient.get<Alert[]>(API_ENDPOINTS.alerts.base)
 
       if (response.success && response.data) {
         return response.data
