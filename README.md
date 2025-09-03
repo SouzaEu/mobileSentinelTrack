@@ -44,31 +44,42 @@ cd sentineltrack-mobile
 
 ### 2. Instale as dependências
 ```bash
-npm install
+npm install --legacy-peer-deps
 # ou
-yarn install
+yarn install --legacy-peer-deps
 ```
 
 ### 3. Configure as variáveis de ambiente
-Crie um arquivo `.env` na raiz do projeto (Expo lê variáveis com prefixo EXPO_PUBLIC_):
+Crie um arquivo `.env` na raiz do projeto baseado no `ENV_EXAMPLE.md`:
+
 ```env
-EXPO_PUBLIC_API_BASE_URL=https://api.sentineltrack.com/v1
+# Desenvolvimento com mocks
 EXPO_PUBLIC_USE_MOCKS=true
+EXPO_PUBLIC_API_BASE_URL=https://api.sentineltrack.com/v1
+EXPO_PUBLIC_ENVIRONMENT=development
+
+# Para integração com backend real:
+# EXPO_PUBLIC_USE_MOCKS=false
+# EXPO_PUBLIC_API_BASE_URL=https://seu-backend.com/api/v1
+# EXPO_PUBLIC_ENVIRONMENT=production
 ```
 
 ### 4. Execute o projeto
 ```bash
 # Iniciar o servidor de desenvolvimento
-npm start
+npx expo start
 
 # Para Android
-npm run android
+npx expo run:android
 
 # Para iOS
-npm run ios
+npx expo run:ios
 
 # Para Web (desenvolvimento)
-npm run web
+npx expo start --web
+
+# Se der erro de dependências web, execute:
+npx expo install react-native-web @expo/metro-runtime
 ```
 
 ## 📱 Como Usar
@@ -145,14 +156,57 @@ src/
 
 ```bash
 # Desenvolvimento
-npm start              # Inicia o servidor Expo
-npm run android        # Executa no Android
-npm run ios           # Executa no iOS
-npm run web           # Executa no navegador
+npx expo start              # Inicia o servidor Expo
+npx expo run:android        # Executa no Android
+npx expo run:ios           # Executa no iOS
+npx expo start --web       # Executa no navegador
+
+# Ambientes
+npm run start:dev          # Desenvolvimento com mocks
+npm run start:staging      # Homologação com backend de teste
+npm run start:prod        # Produção com backend real
 
 # Build
 npm run build         # Build para produção
+
+# Builds por ambiente
+npm run build:android:staging  # Android staging
+npm run build:android:prod     # Android produção
+npm run build:ios:staging      # iOS staging
+npm run build:ios:prod         # iOS produção
+
+# Qualidade de Código
+npm run lint          # Executa ESLint
+npm run lint:fix      # Corrige problemas do ESLint
+npm run format        # Formata código com Prettier
+npm run format:check  # Verifica formatação
 ```
+
+## 🔗 Integração com Backend
+
+O projeto está configurado para funcionar com mocks por padrão, mas pode ser facilmente integrado com qualquer backend REST.
+
+### Configuração Rápida
+
+1. **Desenvolvimento (Mocks)**
+```bash
+npm run start:dev
+```
+
+2. **Integração com Backend Real**
+```bash
+# Edite o arquivo .env
+EXPO_PUBLIC_USE_MOCKS=false
+EXPO_PUBLIC_API_BASE_URL=https://seu-backend.com/api/v1
+
+# Execute
+npm run start:prod
+```
+
+### Documentação Completa
+- 📋 [Endpoints da API](API_INTEGRATION.md)
+- 🔧 [Configuração de Ambientes](ENVIRONMENT_CONFIG.md)
+- 📊 [Estrutura de Respostas](API_INTEGRATION.md#estrutura-de-resposta-esperada)
 
 ## 📊 Critérios de Avaliação Atendidos
 
@@ -179,6 +233,7 @@ npm run build         # Build para produção
 - TypeScript
 - Padrões de desenvolvimento
 - Separação de responsabilidades
+- ESLint e Prettier configurados
 
 ### ✅ Documentação e Apresentação (10 pontos)
 - README completo
@@ -202,18 +257,29 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 👥 Equipe
 
-- **Desenvolvedor Principal**: Seu Nome
-- **Email**: seu.email@exemplo.com
-- **LinkedIn**: [Seu Perfil](https://linkedin.com/in/seu-perfil)
+### Desenvolvedores
+
+| Nome | RM | GitHub |
+|------|----|--------|
+| **Thomaz Oliveira Vilas Boas Bartol** | RM555323 | [@Tho](https://github.com/Tho) |
+| **Vinicius Souza Carvalho** | RM556089 | [@SouzaEu](https://github.com/SouzaEu) |
+| **Gabriel Duarte Pinto** | RM556972 | [@gabrielduar7e](https://github.com/gabrielduar7e) |
+
+### Responsabilidades
+- **Thomaz**: Desenvolvimento de componentes UI e sistema de design
+- **Vinicius**: Arquitetura do projeto e integração com APIs
+- **Gabriel**: Implementação de telas e funcionalidades de CRUD
 
 ## 🆘 Suporte
 
 Se você encontrar algum problema ou tiver dúvidas:
 
 1. Verifique a [documentação](#-como-usar)
-2. Procure em [Issues existentes](https://github.com/seu-usuario/sentineltrack-mobile/issues)
-3. Crie uma [nova issue](https://github.com/seu-usuario/sentineltrack-mobile/issues/new)
+2. Procure em [Issues existentes](https://github.com/SouzaEu/sentineltrack-mobile/issues)
+3. Crie uma [nova issue](https://github.com/SouzaEu/sentineltrack-mobile/issues/new)
 
 ---
 
 **SentinelTrack Mobile** - Monitoramento inteligente de frotas 🏍️
+
+*Desenvolvido com ❤️ pela equipe SentinelTrack*

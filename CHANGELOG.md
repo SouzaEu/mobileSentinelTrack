@@ -3,52 +3,61 @@
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
-e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [1.0.0] - 2024-01-15
+## [0.1.0] - 2024-12-19
 
 ### Adicionado
-- Sistema de autenticação completo (login/cadastro/logout)
-- CRUD completo para gerenciamento de motocicletas
-- Dashboard com estatísticas e alertas em tempo real
-- Sistema de temas claro/escuro com persistência
-- Navegação por tabs e stack navigation
-- Integração com API REST (mock para desenvolvimento)
-- Componentes UI reutilizáveis (Button, Card, Input, Badge)
-- Cache inteligente para otimização de performance
-- Tratamento de erros e estados de loading
-- Validação de formulários
-- Documentação completa
+- Sistema completo de autenticação (login/registro/logout)
+- CRUD completo de motocicletas
+- Sistema de tema claro/escuro
+- Dashboard principal com estatísticas
+- Navegação com bottom tabs e stack navigation
+- Integração com APIs mock/real
+- Sistema de cache com AsyncStorage
+- Componentes UI reutilizáveis
+- Tratamento de erros e loading states
+- Configuração de ESLint e Prettier
+- Documentação completa do projeto
 
 ### Funcionalidades Principais
-- **Autenticação**: Login seguro com JWT e refresh tokens
-- **Dashboard**: Visão geral da frota com métricas importantes
-- **Gerenciamento de Motos**: Adicionar, editar, visualizar e excluir motos
-- **Monitoramento**: Status em tempo real, localização e nível de bateria
-- **Alertas**: Sistema de notificações para eventos importantes
-- **Perfil**: Configurações do usuário e preferências de tema
+- **Autenticação**: Login e cadastro com validação completa
+- **Gerenciamento de Motos**: Criar, visualizar, editar e deletar motocicletas
+- **Monitoramento**: Status, localização e bateria em tempo real
+- **Sistema de Alertas**: Notificações de velocidade, área restrita e manutenção
+- **Tema Adaptativo**: Suporte a modo claro e escuro
+- **Navegação Intuitiva**: Interface com bottom tabs e navegação em stack
 
 ### Tecnologias
 - React Native 0.74.5
-- Expo 51.0.0
-- TypeScript 5.3.3
+- Expo ~51.0.0
+- TypeScript ~5.3.3
 - React Navigation 6.x
 - Expo Secure Store
 - AsyncStorage
+- Vector Icons (Ionicons)
 
 ### Arquitetura
-- Context API para gerenciamento de estado global
-- Hooks customizados para lógica reutilizável
-- Serviços modulares para integração com API
+- Estrutura modular e organizada
+- Context API para estado global
+- Hooks customizados
+- Services para integração com APIs
+- Componentes reutilizáveis
 - Sistema de design consistente
-- Estrutura de pastas organizada
+
+### Qualidade de Código
+- TypeScript em todo o projeto
+- ESLint configurado com regras específicas para React Native
+- Prettier para formatação consistente
+- Padrões de desenvolvimento seguidos
+- Código limpo e bem documentado
 
 ## [Unreleased]
 
 ### Planejado
-- Integração com mapas para visualização de localização
-- Notificações push
+- Integração com APIs reais
+- Sistema de notificações push
+- Mapa interativo para localização
 - Relatórios e analytics
-- Modo offline
-- Sincronização automática
 - Testes automatizados
+- CI/CD pipeline
