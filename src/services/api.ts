@@ -1,6 +1,5 @@
 import * as SecureStore from "expo-secure-store"
-
-const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL as string) || "https://api.sentineltrack.com/v1"
+import { API_CONFIG, STORAGE_KEYS } from "../constants"
 
 interface ApiResponse<T> {
   data: T
@@ -23,7 +22,7 @@ class ApiClient {
 
   private async getAuthToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync("authToken")
+      return await SecureStore.getItemAsync(STORAGE_KEYS.AUTH_TOKEN)
     } catch (error) {
       console.log("Error getting auth token:", error)
       return null
@@ -89,5 +88,5 @@ class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient(API_BASE_URL)
+export const apiClient = new ApiClient(API_CONFIG.baseURL as string)
 export type { ApiResponse, ApiError }

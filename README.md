@@ -112,46 +112,6 @@ npx expo install react-native-web @expo/metro-runtime
 - Gerencie informações da conta
 - Configure preferências do aplicativo
 
-## 🏗️ Arquitetura do Projeto
-
-```
-src/
-├── components/          # Componentes reutilizáveis
-│   └── ui/             # Sistema de design
-├── contexts/           # Contextos React (Auth, Theme)
-├── hooks/              # Hooks customizados
-├── navigation/         # Configuração de navegação
-├── screens/            # Telas do aplicativo
-│   ├── auth/          # Telas de autenticação
-│   └── main/          # Telas principais
-├── services/           # Integração com APIs
-└── utils/              # Utilitários e helpers
-```
-
-### Padrões de Código
-
-- **TypeScript**: Tipagem estática em todo o projeto
-- **Hooks**: Gerenciamento de estado com React Hooks
-- **Context API**: Estado global para autenticação e tema
-- **Async/Await**: Operações assíncronas
-- **Error Boundaries**: Tratamento de erros
-
-## 🎨 Sistema de Design
-
-### Cores
-- **Primary**: #059669 (Verde principal)
-- **Secondary**: #475569 (Cinza azulado)
-- **Accent**: #10b981 (Verde claro)
-- **Destructive**: #dc2626 (Vermelho)
-- **Warning**: #f59e0b (Amarelo)
-
-### Componentes UI
-- `Button`: Botões com variantes e tamanhos
-- `Card`: Cartões com elevação e bordas
-- `Input`: Campos de entrada com validação
-- `Badge`: Indicadores de status
-- `LoadingSpinner`: Indicadores de carregamento
-
 ## 🔧 Scripts Disponíveis
 
 ```bash
@@ -182,6 +142,7 @@ npm run format        # Formata código com Prettier
 npm run format:check  # Verifica formatação
 ```
 
+<<<<<<< HEAD
 ## 🔗 Integração com Backend
 
 O projeto está configurado para funcionar com mocks por padrão, mas pode ser facilmente integrado com qualquer backend REST.
@@ -283,3 +244,10 @@ Se você encontrar algum problema ou tiver dúvidas:
 **SentinelTrack Mobile** - Monitoramento inteligente de frotas 🏍️
 
 *Desenvolvido com ❤️ pela equipe SentinelTrack*
+=======
+## 👥 Equipe
+
+Thomaz Oliveira Vilas Boas Bartol- RM555323
+Vinicius Souza Carvalho - RM556089
+Gabriel Duarte - RM556972
+>>>>>>> 5707c9068f1510356238880a42c682efbdb63067

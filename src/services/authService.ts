@@ -1,6 +1,6 @@
 import { apiClient } from "./api"
+import { API_ENDPOINTS, USE_MOCKS, STORAGE_KEYS } from "../constants"
 import * as SecureStore from "expo-secure-store"
-const USE_MOCKS = process.env.EXPO_PUBLIC_USE_MOCKS === "true"
 
 export interface LoginRequest {
   email: string
@@ -32,7 +32,7 @@ class AuthService {
         return this.mockLogin(credentials)
       }
 
-      const response = await apiClient.post<AuthResponse>("/auth/login", credentials)
+      const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.auth.login, credentials)
 
       if (response.success && response.data) {
         await this.storeTokens(response.data.token, response.data.refreshToken)
@@ -54,7 +54,7 @@ class AuthService {
         return this.mockRegister(userData)
       }
 
-      const response = await apiClient.post<AuthResponse>("/auth/register", userData)
+      const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.auth.register, userData)
 
       if (response.success && response.data) {
         await this.storeTokens(response.data.token, response.data.refreshToken)
@@ -72,7 +72,7 @@ class AuthService {
   async logout(): Promise<void> {
     try {
       if (!USE_MOCKS) {
-        await apiClient.post("/auth/logout")
+        await apiClient.post(API_ENDPOINTS.auth.logout)
       }
     } catch (error) {
       console.log("Logout API error:", error)
@@ -83,15 +83,15 @@ class AuthService {
 
   async refreshToken(): Promise<string | null> {
     try {
-      const refreshToken = await SecureStore.getItemAsync("refreshToken")
+      const refreshToken = await SecureStore.getItemAsync(STORAGE_KEYS.REFRESH_TOKEN)
       if (!refreshToken) return null
 
-      const response = await apiClient.post<{ token: string }>("/auth/refresh", {
+      const response = await apiClient.post<{ token: string }>(API_ENDPOINTS.auth.refresh, {
         refreshToken,
       })
 
       if (response.success && response.data) {
-        await SecureStore.setItemAsync("authToken", response.data.token)
+        await SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TOKEN, response.data.token)
         return response.data.token
       }
 
@@ -103,18 +103,18 @@ class AuthService {
   }
 
   private async storeTokens(token: string, refreshToken: string): Promise<void> {
-    await SecureStore.setItemAsync("authToken", token)
-    await SecureStore.setItemAsync("refreshToken", refreshToken)
+    await SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TOKEN, token)
+    await SecureStore.setItemAsync(STORAGE_KEYS.REFRESH_TOKEN, refreshToken)
   }
 
   private async storeUserData(user: any): Promise<void> {
-    await SecureStore.setItemAsync("userData", JSON.stringify(user))
+    await SecureStore.setItemAsync(STORAGE_KEYS.USER_DATA, JSON.stringify(user))
   }
 
   private async clearStoredData(): Promise<void> {
-    await SecureStore.deleteItemAsync("authToken")
-    await SecureStore.deleteItemAsync("refreshToken")
-    await SecureStore.deleteItemAsync("userData")
+    await SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TOKEN)
+    await SecureStore.deleteItemAsync(STORAGE_KEYS.REFRESH_TOKEN)
+    await SecureStore.deleteItemAsync(STORAGE_KEYS.USER_DATA)
   }
 
   // Mock functions para desenvolvimento
