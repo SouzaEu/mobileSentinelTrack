@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, RefreshControl } from "react-native"
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, RefreshControl, Alert } from "react-native"
 import { useTheme } from "../../contexts/ThemeContext"
 import { Ionicons } from "@expo/vector-icons"
 import { motorcycleService, type Motorcycle } from "../../services/motorcycleService"
 import { useApi } from "../../hooks/useApi"
 import { useFocusEffect } from "@react-navigation/native"
+import { AnimatedCard } from "../../components/AnimatedCard"
+import { AnimatedButton } from "../../components/AnimatedButton"
 
 interface MotorcyclesScreenProps {
   navigation: any
@@ -17,12 +19,16 @@ export function MotorcyclesScreen({ navigation }: MotorcyclesScreenProps) {
   const [searchQuery, setSearchQuery] = useState("")
 
   const {
-    data: motorcycles = [],
+    data: motorcycles,
     loading,
+    error,
     execute: fetchMotorcycles,
   } = useApi(() => motorcycleService.getMotorcycles(), {
     immediate: true,
   })
+
+  // Garantir que motorcycles seja sempre um array válido
+  const safeMotorcycles = Array.isArray(motorcycles) ? motorcycles : []
 
   useFocusEffect(
     useCallback(() => {
@@ -34,9 +40,20 @@ export function MotorcyclesScreen({ navigation }: MotorcyclesScreenProps) {
     fetchMotorcycles()
   }, [fetchMotorcycles])
 
-  const handleAddMotorcycle = () => {
-    navigation.navigate("AddMotorcycle")
-  }
+  const handleAddMotorcycle = useCallback(() => {
+    try {
+      console.log("Navigating to AddMotorcycle...")
+      if (navigation && navigation.navigate) {
+        navigation.navigate("AddMotorcycle")
+      } else {
+        console.log("Navigation object not available")
+        Alert.alert("Erro", "Navegação não disponível")
+      }
+    } catch (error) {
+      console.log("Navigation error:", error)
+      Alert.alert("Erro", "Não foi possível abrir a tela de adicionar moto")
+    }
+  }, [navigation])
 
   const handleMotorcyclePress = (motorcycle: Motorcycle) => {
     navigation.navigate("MotorcycleDetail", { motorcycleId: motorcycle.id })
@@ -87,7 +104,7 @@ export function MotorcyclesScreen({ navigation }: MotorcyclesScreenProps) {
     return date.toLocaleDateString("pt-BR")
   }
 
-  const filteredMotorcycles = motorcycles.filter(
+  const filteredMotorcycles = safeMotorcycles.filter(
     (moto) =>
       moto.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       moto.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -165,12 +182,7 @@ export function MotorcyclesScreen({ navigation }: MotorcyclesScreenProps) {
       padding: 16,
     },
     motorcycleCard: {
-      backgroundColor: colors.card,
-      borderRadius: 16,
-      padding: 16,
-      marginBottom: 12,
-      borderWidth: 1,
-      borderColor: colors.border,
+      // Estilos movidos para AnimatedCard
     },
     cardHeader: {
       flexDirection: "row",
@@ -260,7 +272,11 @@ export function MotorcyclesScreen({ navigation }: MotorcyclesScreenProps) {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={styles.headerTitle}>Motos</Text>
-          <TouchableOpacity style={styles.addButton} onPress={handleAddMotorcycle}>
+          <TouchableOpacity 
+            style={[styles.addButton, { backgroundColor: colors.primary }]} 
+            onPress={handleAddMotorcycle}
+            activeOpacity={0.8}
+          >
             <Ionicons name="add" size={24} color={colors.primaryForeground} />
           </TouchableOpacity>
         </View>
@@ -279,26 +295,39 @@ export function MotorcyclesScreen({ navigation }: MotorcyclesScreenProps) {
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <Text style={[styles.statNumber, { color: colors.accent }]}>
-              {motorcycles.filter((m) => m.status === "active").length}
+              {safeMotorcycles.filter((m) => m.status === "active").length}
             </Text>
             <Text style={styles.statLabel}>Ativas</Text>
           </View>
           <View style={styles.statItem}>
             <Text style={[styles.statNumber, { color: colors.mutedForeground }]}>
-              {motorcycles.filter((m) => m.status === "inactive").length}
+              {safeMotorcycles.filter((m) => m.status === "inactive").length}
             </Text>
             <Text style={styles.statLabel}>Inativas</Text>
           </View>
           <View style={styles.statItem}>
             <Text style={[styles.statNumber, { color: colors.destructive }]}>
-              {motorcycles.filter((m) => m.status === "maintenance").length}
+              {safeMotorcycles.filter((m) => m.status === "maintenance").length}
             </Text>
             <Text style={styles.statLabel}>Manutenção</Text>
           </View>
         </View>
       </View>
 
-      {filteredMotorcycles.length === 0 ? (
+      {error ? (
+        <View style={styles.emptyState}>
+          <Ionicons name="alert-circle-outline" size={64} color={colors.destructive} />
+          <Text style={styles.emptyStateText}>
+            Erro ao carregar motos.{"\n"}Verifique sua conexão e tente novamente.
+          </Text>
+          <TouchableOpacity 
+            style={[styles.addButton, { marginTop: 16, backgroundColor: colors.primary }]} 
+            onPress={handleRefresh}
+          >
+            <Ionicons name="refresh" size={20} color={colors.primaryForeground} />
+          </TouchableOpacity>
+        </View>
+      ) : filteredMotorcycles.length === 0 ? (
         <View style={styles.emptyState}>
           <Ionicons name="bicycle-outline" size={64} color={colors.mutedForeground} />
           <Text style={styles.emptyStateText}>
@@ -310,11 +339,12 @@ export function MotorcyclesScreen({ navigation }: MotorcyclesScreenProps) {
           style={styles.list}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={handleRefresh} />}
         >
-          {filteredMotorcycles.map((motorcycle) => (
-            <TouchableOpacity
+          {filteredMotorcycles.map((motorcycle, index) => (
+            <AnimatedCard
               key={motorcycle.id}
-              style={styles.motorcycleCard}
               onPress={() => handleMotorcyclePress(motorcycle)}
+              delay={index * 100}
+              style={styles.motorcycleCard}
             >
               <View style={styles.cardHeader}>
                 <View style={styles.motorcycleInfo}>
@@ -348,7 +378,7 @@ export function MotorcyclesScreen({ navigation }: MotorcyclesScreenProps) {
 
                 <Text style={styles.lastUpdate}>Última atualização: {formatLastUpdate(motorcycle.lastUpdate)}</Text>
               </View>
-            </TouchableOpacity>
+            </AnimatedCard>
           ))}
         </ScrollView>
       )}

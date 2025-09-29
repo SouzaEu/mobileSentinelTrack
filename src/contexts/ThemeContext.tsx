@@ -47,32 +47,32 @@ const lightColors = {
 }
 
 const darkColors = {
-  background: "#0f172a",
-  foreground: "#f1f5f9",
-  card: "#1e293b",
-  cardForeground: "#f1f5f9",
-  primary: "#10b981",
-  primaryForeground: "#0f172a",
-  secondary: "#334155",
-  secondaryForeground: "#f1f5f9",
-  muted: "#334155",
-  mutedForeground: "#94a3b8",
-  accent: "#34d399",
-  accentForeground: "#0f172a",
-  destructive: "#ef4444",
-  destructiveForeground: "#f1f5f9",
-  warning: "#fbbf24",
-  warningForeground: "#0f172a",
-  success: "#34d399",
-  successForeground: "#0f172a",
-  info: "#60a5fa",
-  infoForeground: "#0f172a",
-  border: "#334155",
-  input: "#1e293b",
-  ring: "rgba(16, 185, 129, 0.3)",
-  overlay: "rgba(0, 0, 0, 0.7)",
-  gradientStart: "#10b981",
-  gradientEnd: "#34d399",
+  background: "#000000",
+  foreground: "#ffffff",
+  card: "#111111",
+  cardForeground: "#ffffff",
+  primary: "#00ff88",
+  primaryForeground: "#000000",
+  secondary: "#1a1a1a",
+  secondaryForeground: "#ffffff",
+  muted: "#1a1a1a",
+  mutedForeground: "#888888",
+  accent: "#00ff88",
+  accentForeground: "#000000",
+  destructive: "#ff4444",
+  destructiveForeground: "#ffffff",
+  warning: "#ffaa00",
+  warningForeground: "#000000",
+  success: "#00ff88",
+  successForeground: "#000000",
+  info: "#00aaff",
+  infoForeground: "#000000",
+  border: "#333333",
+  input: "#1a1a1a",
+  ring: "rgba(0, 255, 136, 0.3)",
+  overlay: "rgba(0, 0, 0, 0.8)",
+  gradientStart: "#00ff88",
+  gradientEnd: "#00aa66",
 }
 
 const typography = {
@@ -144,7 +144,7 @@ const shadows = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("system")
+  const [theme, setTheme] = useState<Theme>("dark")
   const systemColorScheme = useColorScheme()
 
   const isDark = theme === "dark" || (theme === "system" && systemColorScheme === "dark")

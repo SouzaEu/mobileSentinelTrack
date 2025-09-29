@@ -1,8 +1,8 @@
-# 🔗 Configuração de Integração com Backend - SentinelTrack Mobile
+# Integração com API
 
-## 📋 Endpoints da API
+## Endpoints
 
-### 🔐 Autenticação
+### Autenticação
 
 #### POST /auth/login
 ```json
@@ -64,7 +64,7 @@
 }
 ```
 
-### 🏍️ Motocicletas
+### Motocicletas
 
 #### GET /motorcycles
 **Headers:** `Authorization: Bearer {token}`
@@ -145,7 +145,7 @@
 }
 ```
 
-### 🚨 Alertas
+### Alertas
 
 #### GET /alerts
 **Headers:** `Authorization: Bearer {token}`
@@ -168,25 +168,18 @@
 }
 ```
 
-## 🔧 Configuração para Integração Real
+## Configuração
 
-### 1. Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do projeto:
+Para integrar com backend real, configure o arquivo `.env`:
 
 ```env
-# Para desenvolvimento com mocks
-EXPO_PUBLIC_USE_MOCKS=true
-EXPO_PUBLIC_API_BASE_URL=https://api.sentineltrack.com/v1
-
-# Para produção com backend real
-# EXPO_PUBLIC_USE_MOCKS=false
-# EXPO_PUBLIC_API_BASE_URL=https://seu-backend.com/api/v1
+EXPO_PUBLIC_USE_MOCKS=false
+EXPO_PUBLIC_API_BASE_URL=https://seu-backend.com/api/v1
 ```
 
-### 2. Estrutura de Resposta Esperada
+### Estrutura de Resposta
 
-O backend deve retornar sempre no formato:
+Todas as respostas devem seguir o formato:
 ```json
 {
   "success": boolean,
@@ -195,105 +188,17 @@ O backend deve retornar sempre no formato:
 }
 ```
 
-### 3. Headers Necessários
-
-- `Content-Type: application/json`
-- `Authorization: Bearer {token}` (para rotas protegidas)
-
-### 4. Códigos de Status HTTP
-
-- `200` - Sucesso
-- `201` - Criado
-- `400` - Bad Request
-- `401` - Unauthorized
-- `403` - Forbidden
-- `404` - Not Found
-- `500` - Internal Server Error
-
-## 🚀 Como Ativar Integração Real
-
-### Opção 1: Variável de Ambiente
-```bash
-# No arquivo .env
-EXPO_PUBLIC_USE_MOCKS=false
-EXPO_PUBLIC_API_BASE_URL=https://seu-backend.com/api/v1
-```
-
-### Opção 2: Código Direto
-```typescript
-// Em src/services/authService.ts
-const USE_MOCKS = false // Força uso da API real
-```
-
-### Opção 3: Build de Produção
-```bash
-# O build de produção automaticamente usa API real
-npx expo build:android
-npx expo build:ios
-```
-
-## 📊 Endpoints por Funcionalidade
+## Resumo dos Endpoints
 
 | Funcionalidade | Endpoint | Método | Autenticação |
 |----------------|----------|--------|--------------|
-| Login | `/auth/login` | POST | ❌ |
-| Registro | `/auth/register` | POST | ❌ |
-| Logout | `/auth/logout` | POST | ✅ |
-| Refresh Token | `/auth/refresh` | POST | ❌ |
-| Listar Motos | `/motorcycles` | GET | ✅ |
-| Detalhes Moto | `/motorcycles/{id}` | GET | ✅ |
-| Criar Moto | `/motorcycles` | POST | ✅ |
-| Atualizar Moto | `/motorcycles/{id}` | PUT | ✅ |
-| Deletar Moto | `/motorcycles/{id}` | DELETE | ✅ |
-| Listar Alertas | `/alerts` | GET | ✅ |
-
-## 🔍 Validações Esperadas
-
-### Autenticação
-- Email deve ser válido
-- Senha deve ter mínimo 6 caracteres
-- Nome deve ter mínimo 2 caracteres
-
-### Motocicletas
-- Modelo obrigatório
-- Placa obrigatória e única
-- Localização obrigatória
-- Status deve ser um dos valores válidos
-
-### Alertas
-- Tipo deve ser um dos valores válidos
-- Severidade deve ser um dos valores válidos
-- Timestamp deve ser ISO date válida
-
-## 🧪 Testando a Integração
-
-### 1. Verificar Conectividade
-```bash
-curl -X GET https://seu-backend.com/api/v1/health
-```
-
-### 2. Testar Login
-```bash
-curl -X POST https://seu-backend.com/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"123456"}'
-```
-
-### 3. Testar com Token
-```bash
-curl -X GET https://seu-backend.com/api/v1/motorcycles \
-  -H "Authorization: Bearer {seu-token}"
-```
-
-## 📱 Status Atual
-
-- ✅ **Mocks funcionais** para desenvolvimento
-- ✅ **API Client configurado** para integração real
-- ✅ **Tratamento de erros** implementado
-- ✅ **Autenticação JWT** preparada
-- ✅ **Refresh token** implementado
-- ✅ **Cache inteligente** para performance
-
----
-
-**🔗 Pronto para integração com qualquer backend REST! 🚀**
+| Login | `/auth/login` | POST | Não |
+| Registro | `/auth/register` | POST | Não |
+| Logout | `/auth/logout` | POST | Sim |
+| Refresh Token | `/auth/refresh` | POST | Não |
+| Listar Motos | `/motorcycles` | GET | Sim |
+| Detalhes Moto | `/motorcycles/{id}` | GET | Sim |
+| Criar Moto | `/motorcycles` | POST | Sim |
+| Atualizar Moto | `/motorcycles/{id}` | PUT | Sim |
+| Deletar Moto | `/motorcycles/{id}` | DELETE | Sim |
+| Listar Alertas | `/alerts` | GET | Sim |

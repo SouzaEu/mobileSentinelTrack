@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
-import * as SecureStore from "expo-secure-store"
+import { platformStorage } from "../utils/storage"
 import { authService, type AuthResponse } from "../services/authService"
 
 interface User {
@@ -32,14 +32,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuthState = async () => {
     try {
-      const userData = await SecureStore.getItemAsync("userData")
-      const token = await SecureStore.getItemAsync("authToken")
+      const userData = await platformStorage.getItem("userData")
+      const token = await platformStorage.getItem("authToken")
 
       if (token && userData) {
-        setUser(JSON.parse(userData))
+        try {
+          const parsedUser = JSON.parse(userData)
+          setUser(parsedUser)
+        } catch (parseError) {
+          console.log("Error parsing user data:", parseError)
+          // Limpar dados corrompidos
+          await platformStorage.removeItem("userData")
+          await platformStorage.removeItem("authToken")
+        }
       }
     } catch (error) {
       console.log("Error checking auth state:", error)
+      // Em caso de erro, garantir que o usuário não fica logado
+      setUser(null)
     } finally {
       setIsLoading(false)
     }

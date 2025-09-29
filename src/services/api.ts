@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store"
+import { platformStorage } from "../utils/storage"
 import { API_CONFIG, STORAGE_KEYS } from "../constants"
 
 interface ApiResponse<T> {
@@ -22,7 +22,7 @@ class ApiClient {
 
   private async getAuthToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync(STORAGE_KEYS.AUTH_TOKEN)
+      return await platformStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
     } catch (error) {
       console.log("Error getting auth token:", error)
       return null

@@ -1,13 +1,13 @@
-# Guia para Gravação do Vídeo de Apresentação
+# Guia para Gravação do Vídeo
 
-## 📹 Roteiro do Vídeo - SentinelTrack Mobile
+## Roteiro de Demonstração
 
-### Duração Sugerida: 5-7 minutos
+### Duração: 5-7 minutos
 
 ### 1. Introdução (30 segundos)
-- Apresentar o projeto: "SentinelTrack Mobile - Sistema de monitoramento inteligente de motos"
-- Mostrar a equipe: Thomaz, Vinicius e Gabriel
-- Explicar o objetivo: Monitoramento de frotas de motocicletas em tempo real
+- Apresentar o projeto: "SentinelTrack Mobile"
+- Equipe: Thomaz (RM555323), Vinicius (RM556089), Gabriel (RM556972)
+- Objetivo: Sistema de monitoramento de frotas de motocicletas
 
 ### 2. Demonstração das Funcionalidades (4-5 minutos)
 
@@ -92,56 +92,29 @@
 - Agradecer à equipe
 - Informações de contato
 
-## 🎬 Dicas para Gravação
+## Checklist de Demonstração
 
-### Preparação
-- Teste o app antes da gravação
-- Prepare as credenciais de teste
-- Feche outros aplicativos
-- Configure resolução adequada (1080p)
-
-### Durante a Gravação
-- Fale de forma clara e pausada
-- Demonstre cada funcionalidade completamente
-- Use gestos para destacar elementos
-- Mantenha o foco na tela do app
-
-### Pós-Produção
-- Adicione legendas se necessário
-- Corte pausas longas
-- Mantenha qualidade de áudio
-- Verifique se tudo está visível
-
-## 📱 Funcionalidades para Destacar
-
-### ✅ Critérios de Avaliação Atendidos
-1. **Telas funcionais integradas com API** - CRUD completo demonstrado
-2. **Sistema de Login** - Login, cadastro e logout funcionais
-3. **Estilização com Tema** - Modo claro/escuro implementado
-4. **Arquitetura de Código** - Estrutura organizada e TypeScript
-5. **Documentação** - README completo e código documentado
-
-### 🎯 Pontos Fortes para Enfatizar
-- Interface moderna e intuitiva
-- Performance otimizada com cache
-- Tratamento robusto de erros
-- Código limpo e bem estruturado
-- Experiência do usuário fluida
-
-## 📋 Checklist do Vídeo
-
-- [ ] Introdução do projeto
-- [ ] Demonstração do login
-- [ ] Demonstração do cadastro
+- [ ] Introdução do projeto e equipe
+- [ ] Login com credenciais de teste
 - [ ] Dashboard principal
-- [ ] Lista de motos
-- [ ] Adicionar moto
-- [ ] Visualizar detalhes
-- [ ] Editar moto
+- [ ] Lista de motos com busca
+- [ ] Adicionar nova moto
+- [ ] Visualizar detalhes de moto
+- [ ] Editar moto existente
 - [ ] Excluir moto
-- [ ] Alternar tema
+- [ ] Alternar tema claro/escuro
 - [ ] Navegação entre telas
-- [ ] Aspectos técnicos
-- [ ] Conclusão
+- [ ] Logout
 
-**Boa sorte na gravação! 🚀**
+## Credenciais de Teste
+
+- Email: admin@test.com
+- Senha: 123456
+
+## Aspectos Técnicos a Mencionar
+
+- React Native com TypeScript
+- Arquitetura modular
+- Sistema de temas
+- Integração com APIs
+- Tratamento de erros

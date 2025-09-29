@@ -1,111 +1,50 @@
-# 🌐 Como Executar o SentinelTrack na Web
+# Execução Web
 
-## 🚀 Comandos para Web
+Guia para executar o SentinelTrack Mobile no navegador.
 
-### 1. Instalar Dependências Web (se necessário)
+## Comandos
+
 ```bash
-npx expo install react-native-web @expo/metro-runtime
-```
-
-### 2. Iniciar o Projeto na Web
-```bash
-npx expo start --web
-```
-
-### 3. Alternativas de Execução
-```bash
-# Opção 1: Iniciar e escolher web
-npx expo start
-# Depois pressionar 'w' para abrir no navegador
-
-# Opção 2: Executar diretamente na web
-npx expo start --web
-
-# Opção 3: Usar npm script (se configurado)
+# Opção 1 (recomendada)
 npm run web
+
+# Opção 2
+npx expo start --web
 ```
 
-## 📱 Funcionalidades Disponíveis na Web
+## Funcionalidades Web
 
-✅ **Sistema de Autenticação**
-- Login: admin@test.com / 123456
-- Cadastro de usuários
-- Logout funcional
+- Sistema de autenticação completo
+- CRUD de motocicletas
+- Dashboard interativo
+- Tema claro/escuro
+- Navegação responsiva
 
-✅ **CRUD de Motocicletas**
-- Criar, visualizar, editar, deletar motos
-- Busca e filtros
-- Indicadores de status
+### Credenciais de Teste
+- Email: admin@test.com
+- Senha: 123456
 
-✅ **Sistema de Tema**
-- Modo claro/escuro
-- Persistência de preferências
+## Compatibilidade
 
-✅ **Dashboard**
-- Estatísticas em tempo real
-- Alertas do sistema
+Navegadores suportados:
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
 
-## 🔧 Configurações Importantes
+## Resolução de Problemas
 
-### Porta Padrão
-- **Web:** http://localhost:8081 (ou 8082 se ocupada)
-- **Metro Bundler:** http://localhost:8081
-
-### Navegadores Suportados
-- Chrome (recomendado)
-- Firefox
-- Safari
-- Edge
-
-### Recursos Web
-- ✅ Responsividade
-- ✅ Navegação por teclado
-- ✅ Touch gestures (em dispositivos touch)
-- ✅ PWA support (se configurado)
-
-## 🎯 Vantagens da Versão Web
-
-1. **Desenvolvimento Rápido**
-   - Hot reload instantâneo
-   - Debugging fácil
-   - Ferramentas de desenvolvedor
-
-2. **Testes**
-   - Testar funcionalidades rapidamente
-   - Compatibilidade cross-browser
-   - Performance em diferentes dispositivos
-
-3. **Demonstração**
-   - Fácil compartilhamento via URL
-   - Não precisa de emulador
-   - Acesso imediato
-
-## 📋 Checklist para Web
-
-- [ ] Dependências web instaladas
-- [ ] Servidor iniciado na porta correta
-- [ ] Navegador aberto automaticamente
-- [ ] Login funcionando
-- [ ] CRUD de motos funcionando
-- [ ] Tema claro/escuro funcionando
-- [ ] Navegação entre telas funcionando
-
-## 🚨 Solução de Problemas
-
-### Erro: "web support but don't have the required dependencies"
+### Erro de módulo não encontrado:
 ```bash
 npx expo install react-native-web @expo/metro-runtime
 ```
 
-### Erro: "Port 8081 is being used"
-- Aceite usar porta 8082
-- Ou feche outros processos na porta 8081
-
-### Erro: "Cannot find module"
+### Porta em uso:
 ```bash
-npm install --legacy-peer-deps
+npx kill-port 8081
 ```
 
----
-
-**🌐 SentinelTrack Web** - Acessível em qualquer navegador! 🚀
+### Limpar cache:
+```bash
+npx expo start --web --clear
+```

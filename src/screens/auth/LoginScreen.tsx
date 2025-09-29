@@ -16,6 +16,7 @@ import {
 import { useTheme } from "../../contexts/ThemeContext"
 import { useAuth } from "../../contexts/AuthContext"
 import { Ionicons } from "@expo/vector-icons"
+import { AnimatedButton } from "../../components/AnimatedButton"
 
 export function LoginScreen({ navigation }: any) {
   const { colors } = useTheme()
@@ -34,7 +35,7 @@ export function LoginScreen({ navigation }: any) {
       const messages = [] as string[]
       if (!isEmailValid) messages.push("Email inválido")
       if (!isPasswordValid) messages.push(`Senha com no mínimo ${VALIDATION_RULES.password.minLength} caracteres`)
-      Alert.alert("Erro", messages.join("\n"))
+      Alert.alert("Erro de Validação", messages.join("\n"))
       return
     }
 
@@ -42,10 +43,10 @@ export function LoginScreen({ navigation }: any) {
     try {
       const success = await login(email.trim(), password)
       if (!success) {
-        Alert.alert("Erro", "Email ou senha incorretos")
+        Alert.alert("Erro de Login", "Email ou senha incorretos.\n\nPara demonstração, use:\nEmail: admin@test.com\nSenha: 123456")
       }
-    } catch (error) {
-      Alert.alert("Erro", "Ocorreu um erro ao fazer login")
+    } catch (error: any) {
+      Alert.alert("Erro de Login", error.message || "Credenciais inválidas.\n\nPara demonstração, use:\nEmail: admin@test.com\nSenha: 123456")
     } finally {
       setIsLoading(false)
     }
@@ -188,13 +189,14 @@ export function LoginScreen({ navigation }: any) {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={[styles.loginButton, (isLoading || !isFormValid) && styles.loginButtonDisabled]}
+          <AnimatedButton
+            title="Entrar"
             onPress={handleLogin}
-            disabled={isLoading || !isFormValid}
-          >
-            <Text style={styles.loginButtonText}>{isLoading ? "Entrando..." : "Entrar"}</Text>
-          </TouchableOpacity>
+            disabled={!isFormValid}
+            loading={isLoading}
+            icon="log-in"
+            size="lg"
+          />
         </View>
 
         <View style={styles.footer}>

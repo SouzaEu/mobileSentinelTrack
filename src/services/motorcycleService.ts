@@ -229,9 +229,9 @@ class MotorcycleService {
     }
   }
 
-  // Mock methods para desenvolvimento
+  // Mock methods para desenvolvimento - Dados mínimos para demonstração
   private async getMockMotorcycles(): Promise<Motorcycle[]> {
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    await new Promise((resolve) => setTimeout(resolve, 500))
 
     return [
       {
@@ -240,68 +240,26 @@ class MotorcycleService {
         plate: "ABC-1234",
         status: "active",
         location: {
-          address: "Av. Paulista, 1000 - Bela Vista, São Paulo",
+          address: "Av. Paulista, 1000 - São Paulo",
           latitude: -23.5613,
           longitude: -46.6565,
         },
         battery: 85,
-        lastUpdate: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
-        driver: {
-          id: "D001",
-          name: "João Silva",
-        },
+        lastUpdate: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
         alerts: [],
       },
       {
-        id: "MT-007",
+        id: "MT-002",
         model: "Yamaha Factor 125",
         plate: "XYZ-5678",
         status: "active",
         location: {
-          address: "Rua Augusta, 500 - Consolação, São Paulo",
+          address: "Rua Augusta, 500 - São Paulo",
           latitude: -23.5505,
           longitude: -46.6333,
         },
         battery: 92,
-        lastUpdate: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-        alerts: [
-          {
-            id: "A001",
-            type: "speed",
-            title: "Velocidade Excessiva",
-            description: "Velocidade acima do limite permitido",
-            severity: "high",
-            timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-            resolved: false,
-          },
-        ],
-      },
-      {
-        id: "MT-015",
-        model: "Honda Biz 125",
-        plate: "DEF-9012",
-        status: "inactive",
-        location: {
-          address: "Vila Madalena - São Paulo",
-          latitude: -23.5505,
-          longitude: -46.6888,
-        },
-        battery: 45,
-        lastUpdate: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-        alerts: [],
-      },
-      {
-        id: "MT-023",
-        model: "Yamaha XTZ 150",
-        plate: "GHI-3456",
-        status: "maintenance",
-        location: {
-          address: "Oficina Central - Mooca, São Paulo",
-          latitude: -23.5505,
-          longitude: -46.6,
-        },
-        battery: 0,
-        lastUpdate: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        lastUpdate: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
         alerts: [],
       },
     ]
@@ -312,29 +270,11 @@ class MotorcycleService {
       {
         id: "A001",
         type: "speed",
-        title: "Velocidade Excessiva",
-        description: "Moto #MT-001 - Av. Paulista",
-        severity: "high",
-        timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-        resolved: false,
-      },
-      {
-        id: "A002",
-        type: "location",
-        title: "Área Restrita",
-        description: "Moto #MT-007 - Centro",
-        severity: "medium",
-        timestamp: new Date(Date.now() - 32 * 60 * 1000).toISOString(),
-        resolved: false,
-      },
-      {
-        id: "A003",
-        type: "battery",
-        title: "Parada Prolongada",
-        description: "Moto #MT-015 - Vila Madalena",
+        title: "Sistema Funcionando",
+        description: "Todas as motos operando normalmente",
         severity: "low",
-        timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-        resolved: false,
+        timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+        resolved: true,
       },
     ]
   }

@@ -1,22 +1,23 @@
 # SentinelTrack Mobile
 
-Sistema de monitoramento inteligente de motos Mottu com IA - Aplicativo Mobile React Native
+Sistema de monitoramento de frotas de motocicletas desenvolvido em React Native.
 
-## 📱 Sobre o Projeto
+## Proposta do Projeto
 
-SentinelTrack é um aplicativo mobile desenvolvido em React Native para monitoramento em tempo real de frotas de motocicletas. O sistema oferece funcionalidades completas de CRUD, autenticação segura, tema claro/escuro e integração com APIs para gerenciamento eficiente de veículos.
+O SentinelTrack Mobile é um aplicativo desenvolvido para facilitar o gerenciamento e monitoramento de frotas de motocicletas em tempo real. A solução oferece uma interface intuitiva para controle completo dos veículos, permitindo acompanhar status, localização, bateria e receber alertas importantes.
 
-### ✨ Funcionalidades Principais
+O projeto foi desenvolvido como parte da disciplina de Mobile Development, implementando as melhores práticas de desenvolvimento React Native com TypeScript, arquitetura modular e integração com APIs.
 
-- **Autenticação Completa**: Login e cadastro com validação
-- **Gerenciamento de Motos**: CRUD completo (Criar, Ler, Atualizar, Deletar)
-- **Monitoramento em Tempo Real**: Status, localização e bateria das motos
-- **Sistema de Alertas**: Notificações de velocidade, área restrita e manutenção
-- **Tema Claro/Escuro**: Interface adaptável com preferências do usuário
-- **Navegação Intuitiva**: Bottom tabs e stack navigation
-- **Componentes Reutilizáveis**: Sistema de design consistente
+### Funcionalidades
 
-## 🛠️ Tecnologias Utilizadas
+- Autenticação de usuários (login/cadastro)
+- Gerenciamento completo de motocicletas (CRUD)
+- Monitoramento de status, localização e bateria
+- Sistema de alertas e notificações
+- Tema claro e escuro
+- Interface responsiva
+
+## Tecnologias
 
 - **React Native** 0.74.5
 - **Expo** ~51.0.0
@@ -26,228 +27,114 @@ SentinelTrack é um aplicativo mobile desenvolvido em React Native para monitora
 - **AsyncStorage** (cache e persistência)
 - **Vector Icons** (Ionicons)
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 
-- Node.js 18+ 
+- Node.js 18+
 - npm ou yarn
 - Expo CLI
-- Android Studio (para Android) ou Xcode (para iOS)
-- Dispositivo físico ou emulador
 
-## 🚀 Instalação e Configuração
+## Instalação
 
-### 1. Clone o repositório
+1. Instale as dependências:
+
 ```bash
-git clone https://github.com/SouzaEu/sentineltrack-mobile.git
-cd sentineltrack-mobile
+npm install
 ```
 
-### 2. Instale as dependências
-```bash
-npm install --legacy-peer-deps
-# ou
-yarn install --legacy-peer-deps
-```
-
-### 3. Configure as variáveis de ambiente
-Crie um arquivo `.env` na raiz do projeto baseado no `ENV_EXAMPLE.md`:
+2. Configure o arquivo `.env`:
 
 ```env
-# Desenvolvimento com mocks
 EXPO_PUBLIC_USE_MOCKS=true
 EXPO_PUBLIC_API_BASE_URL=https://api.sentineltrack.com/v1
 EXPO_PUBLIC_ENVIRONMENT=development
-
-# Para integração com backend real:
-# EXPO_PUBLIC_USE_MOCKS=false
-# EXPO_PUBLIC_API_BASE_URL=https://seu-backend.com/api/v1
-# EXPO_PUBLIC_ENVIRONMENT=production
 ```
 
-### 4. Execute o projeto
+3. Execute o projeto:
+
 ```bash
-# Iniciar o servidor de desenvolvimento
+# Web
+npm run web
+
+# Mobile
 npx expo start
-
-# Para Android
-npx expo run:android
-
-# Para iOS
-npx expo run:ios
-
-# Para Web (desenvolvimento)
-npx expo start --web
-
-# Se der erro de dependências web, execute:
-npx expo install react-native-web @expo/metro-runtime
 ```
 
-## 📱 Como Usar
-
-### Primeiro Acesso
-1. Abra o aplicativo
-2. Crie uma conta ou faça login
-3. Explore o dashboard principal
-4. Adicione suas primeiras motos
+## Como Usar
 
 ### Credenciais de Teste
-- **Email**: admin@test.com
-- **Senha**: 123456
 
-### Funcionalidades Principais
+- Email: admin@test.com
+- Senha: 123456
 
-#### Dashboard
-- Visualize estatísticas gerais da frota
-- Acompanhe alertas em tempo real
-- Acesse informações resumidas
+### Funcionalidades
 
-#### Gerenciamento de Motos
-- **Adicionar**: Cadastre novas motos com modelo, placa e localização
-- **Visualizar**: Veja detalhes completos de cada veículo
-- **Editar**: Atualize informações como status e dados básicos
-- **Excluir**: Remova motos da frota com confirmação
+- Dashboard com estatísticas da frota
+- Cadastro e gerenciamento de motocicletas
+- Sistema de alertas em tempo real
+- Alternância entre tema claro e escuro
 
-#### Perfil e Configurações
-- Altere entre tema claro e escuro
-- Gerencie informações da conta
-- Configure preferências do aplicativo
+## Estrutura de Pastas
 
-## 🔧 Scripts Disponíveis
-
-```bash
-# Desenvolvimento
-npx expo start              # Inicia o servidor Expo
-npx expo run:android        # Executa no Android
-npx expo run:ios           # Executa no iOS
-npx expo start --web       # Executa no navegador
-
-# Ambientes
-npm run start:dev          # Desenvolvimento com mocks
-npm run start:staging      # Homologação com backend de teste
-npm run start:prod        # Produção com backend real
-
-# Build
-npm run build         # Build para produção
-
-# Builds por ambiente
-npm run build:android:staging  # Android staging
-npm run build:android:prod     # Android produção
-npm run build:ios:staging      # iOS staging
-npm run build:ios:prod         # iOS produção
-
-# Qualidade de Código
-npm run lint          # Executa ESLint
-npm run lint:fix      # Corrige problemas do ESLint
-npm run format        # Formata código com Prettier
-npm run format:check  # Verifica formatação
+```
+sentineltrack-mobile/
+├── src/
+│   ├── components/          # Componentes reutilizáveis
+│   │   ├── ui/             # Componentes base (Button, Card, Input)
+│   │   ├── AnimatedCard.tsx # Componente com animações
+│   │   └── ErrorBoundary.tsx # Tratamento de erros
+│   ├── contexts/           # Gerenciamento de estado global
+│   │   ├── AuthContext.tsx # Contexto de autenticação
+│   │   └── ThemeContext.tsx # Contexto de tema
+│   ├── hooks/              # Hooks customizados
+│   │   ├── useApi.ts       # Hook para requisições API
+│   │   └── useAnimatedValue.ts # Hook para animações
+│   ├── navigation/         # Configuração de navegação
+│   │   └── AppNavigator.tsx # Navegação principal
+│   ├── screens/            # Telas da aplicação
+│   │   ├── auth/           # Telas de autenticação
+│   │   │   ├── LoginScreen.tsx
+│   │   │   └── RegisterScreen.tsx
+│   │   └── main/           # Telas principais
+│   │       ├── HomeScreen.tsx
+│   │       ├── MotorcyclesScreen.tsx
+│   │       ├── AddMotorcycleScreen.tsx
+│   │       ├── EditMotorcycleScreen.tsx
+│   │       ├── MotorcycleDetailScreen.tsx
+│   │       └── ProfileScreen.tsx
+│   ├── services/           # Integração com APIs
+│   │   ├── api.ts          # Cliente HTTP base
+│   │   ├── authService.ts  # Serviços de autenticação
+│   │   └── motorcycleService.ts # Serviços de motos
+│   ├── utils/              # Utilitários e helpers
+│   │   ├── storage.ts      # Wrapper de armazenamento
+│   │   └── theme.ts        # Utilitários de tema
+│   └── constants/          # Constantes da aplicação
+│       └── index.ts        # Configurações e validações
+├── assets/                 # Recursos estáticos
+├── docs/                   # Documentação adicional
+├── .env.example           # Exemplo de variáveis de ambiente
+├── package.json           # Dependências do projeto
+└── README.md              # Este arquivo
 ```
 
-<<<<<<< HEAD
-## 🔗 Integração com Backend
+## Vídeo de Demonstração
 
-O projeto está configurado para funcionar com mocks por padrão, mas pode ser facilmente integrado com qualquer backend REST.
+O vídeo demonstrativo do aplicativo em funcionamento está disponível e apresenta:
 
-### Configuração Rápida
+- Processo completo de login e autenticação
+- Navegação entre todas as telas do aplicativo
+- Funcionalidades de CRUD de motocicletas (criar, visualizar, editar, excluir)
+- Dashboard com estatísticas em tempo real
+- Sistema de alertas e notificações
+- Alternância entre tema claro e escuro
+- Interface responsiva e animações
 
-1. **Desenvolvimento (Mocks)**
-```bash
-npm run start:dev
-```
+**Nota**: O vídeo será gravado demonstrando o aplicativo rodando no navegador web (Expo Web) para facilitar a visualização de todas as funcionalidades.
 
-2. **Integração com Backend Real**
-```bash
-# Edite o arquivo .env
-EXPO_PUBLIC_USE_MOCKS=false
-EXPO_PUBLIC_API_BASE_URL=https://seu-backend.com/api/v1
+## Equipe
 
-# Execute
-npm run start:prod
-```
-
-### Documentação Completa
-- 📋 [Endpoints da API](API_INTEGRATION.md)
-- 🔧 [Configuração de Ambientes](ENVIRONMENT_CONFIG.md)
-- 📊 [Estrutura de Respostas](API_INTEGRATION.md#estrutura-de-resposta-esperada)
-
-## 📊 Critérios de Avaliação Atendidos
-
-### ✅ Telas funcionais integradas com API (40 pontos)
-- Dashboard com dados em tempo real
-- CRUD completo de motos
-- Integração com serviços mock/reais
-- Tratamento de loading e erros
-
-### ✅ Sistema de Login (20 pontos)
-- Tela de login funcional
-- Tela de cadastro com validação
-- Logout seguro
-- Persistência de sessão
-
-### ✅ Estilização com Tema (15 pontos)
-- Tema claro e escuro
-- Transições suaves
-- Design consistente
-- Componentes reutilizáveis
-
-### ✅ Arquitetura de Código (15 pontos)
-- Estrutura organizada
-- TypeScript
-- Padrões de desenvolvimento
-- Separação de responsabilidades
-- ESLint e Prettier configurados
-
-### ✅ Documentação e Apresentação (10 pontos)
-- README completo
-- Comentários no código
-- Guias de instalação
-- Documentação de API
-
-**Total: 100/100 pontos**
-
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 👥 Equipe
-
-### Desenvolvedores
-
-| Nome | RM | GitHub |
-|------|----|--------|
-| **Thomaz Oliveira Vilas Boas Bartol** | RM555323 | [@Tho](https://github.com/Tho) |
-| **Vinicius Souza Carvalho** | RM556089 | [@SouzaEu](https://github.com/SouzaEu) |
-| **Gabriel Duarte Pinto** | RM556972 | [@gabrielduar7e](https://github.com/gabrielduar7e) |
-
-### Responsabilidades
-- **Thomaz**: Desenvolvimento de componentes UI e sistema de design
-- **Vinicius**: Arquitetura do projeto e integração com APIs
-- **Gabriel**: Implementação de telas e funcionalidades de CRUD
-
-## 🆘 Suporte
-
-Se você encontrar algum problema ou tiver dúvidas:
-
-1. Verifique a [documentação](#-como-usar)
-2. Procure em [Issues existentes](https://github.com/SouzaEu/sentineltrack-mobile/issues)
-3. Crie uma [nova issue](https://github.com/SouzaEu/sentineltrack-mobile/issues/new)
-
----
-
-**SentinelTrack Mobile** - Monitoramento inteligente de frotas 🏍️
-
-*Desenvolvido com ❤️ pela equipe SentinelTrack*
-=======
-## 👥 Equipe
-
-Thomaz Oliveira Vilas Boas Bartol- RM555323
-Vinicius Souza Carvalho - RM556089
-Gabriel Duarte - RM556972
->>>>>>> 5707c9068f1510356238880a42c682efbdb63067
+| Nome                              | RM       | GitHub                                             |
+| --------------------------------- | -------- | -------------------------------------------------- |
+| Thomaz Oliveira Vilas Boas Bartol | RM555323 | [@thomazbartol](https://github.com/thomazbartol)   |
+| Vinicius Souza Carvalho           | RM556089 | [@SouzaEu](https://github.com/SouzaEu)             |
+| Gabriel Duarte Pinto              | RM556972 | [@gabrielduar7e](https://github.com/gabrielduar7e) |

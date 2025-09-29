@@ -1,6 +1,6 @@
 import { apiClient } from "./api"
 import { API_ENDPOINTS, USE_MOCKS, STORAGE_KEYS } from "../constants"
-import * as SecureStore from "expo-secure-store"
+import { platformStorage } from "../utils/storage"
 
 export interface LoginRequest {
   email: string
@@ -83,7 +83,7 @@ class AuthService {
 
   async refreshToken(): Promise<string | null> {
     try {
-      const refreshToken = await SecureStore.getItemAsync(STORAGE_KEYS.REFRESH_TOKEN)
+      const refreshToken = await platformStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN)
       if (!refreshToken) return null
 
       const response = await apiClient.post<{ token: string }>(API_ENDPOINTS.auth.refresh, {
@@ -91,7 +91,7 @@ class AuthService {
       })
 
       if (response.success && response.data) {
-        await SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TOKEN, response.data.token)
+        await platformStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.data.token)
         return response.data.token
       }
 
@@ -103,18 +103,18 @@ class AuthService {
   }
 
   private async storeTokens(token: string, refreshToken: string): Promise<void> {
-    await SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TOKEN, token)
-    await SecureStore.setItemAsync(STORAGE_KEYS.REFRESH_TOKEN, refreshToken)
+    await platformStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token)
+    await platformStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken)
   }
 
   private async storeUserData(user: any): Promise<void> {
-    await SecureStore.setItemAsync(STORAGE_KEYS.USER_DATA, JSON.stringify(user))
+    await platformStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user))
   }
 
   private async clearStoredData(): Promise<void> {
-    await SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TOKEN)
-    await SecureStore.deleteItemAsync(STORAGE_KEYS.REFRESH_TOKEN)
-    await SecureStore.deleteItemAsync(STORAGE_KEYS.USER_DATA)
+    await platformStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
+    await platformStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+    await platformStorage.removeItem(STORAGE_KEYS.USER_DATA)
   }
 
   // Mock functions para desenvolvimento
