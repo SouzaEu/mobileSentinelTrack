@@ -1,5 +1,5 @@
 import { apiClient } from "./api"
-import { API_ENDPOINTS, USE_MOCKS, STORAGE_KEYS } from "../constants"
+import { API_ENDPOINTS, STORAGE_KEYS } from "../constants"
 import { platformStorage } from "../utils/storage"
 
 export interface LoginRequest {
@@ -27,11 +27,6 @@ export interface AuthResponse {
 class AuthService {
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     try {
-      // Flag para simular resposta da API
-      if (USE_MOCKS) {
-        return this.mockLogin(credentials)
-      }
-
       const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.auth.login, credentials)
 
       if (response.success && response.data) {
@@ -49,11 +44,6 @@ class AuthService {
 
   async register(userData: RegisterRequest): Promise<AuthResponse> {
     try {
-      // Flag para simular resposta da API
-      if (USE_MOCKS) {
-        return this.mockRegister(userData)
-      }
-
       const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.auth.register, userData)
 
       if (response.success && response.data) {
@@ -71,9 +61,7 @@ class AuthService {
 
   async logout(): Promise<void> {
     try {
-      if (!USE_MOCKS) {
-        await apiClient.post(API_ENDPOINTS.auth.logout)
-      }
+      await apiClient.post(API_ENDPOINTS.auth.logout)
     } catch (error) {
       console.log("Logout API error:", error)
     } finally {
@@ -117,52 +105,6 @@ class AuthService {
     await platformStorage.removeItem(STORAGE_KEYS.USER_DATA)
   }
 
-  // Mock functions para desenvolvimento
-  private async mockLogin(credentials: LoginRequest): Promise<AuthResponse> {
-    // Simular delay da API
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    if (credentials.email === "admin@test.com" && credentials.password === "123456") {
-      const mockResponse: AuthResponse = {
-        user: {
-          id: "1",
-          name: "Administrador",
-          email: credentials.email,
-          role: "admin",
-        },
-        token: "mock-jwt-token-" + Date.now(),
-        refreshToken: "mock-refresh-token-" + Date.now(),
-      }
-
-      await this.storeTokens(mockResponse.token, mockResponse.refreshToken)
-      await this.storeUserData(mockResponse.user)
-
-      return mockResponse
-    }
-
-    throw new Error("Email ou senha incorretos")
-  }
-
-  private async mockRegister(userData: RegisterRequest): Promise<AuthResponse> {
-    // Simular delay da API
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    const mockResponse: AuthResponse = {
-      user: {
-        id: Date.now().toString(),
-        name: userData.name,
-        email: userData.email,
-        role: "user",
-      },
-      token: "mock-jwt-token-" + Date.now(),
-      refreshToken: "mock-refresh-token-" + Date.now(),
-    }
-
-    await this.storeTokens(mockResponse.token, mockResponse.refreshToken)
-    await this.storeUserData(mockResponse.user)
-
-    return mockResponse
-  }
 }
 
 export const authService = new AuthService()

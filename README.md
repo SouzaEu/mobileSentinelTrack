@@ -43,6 +43,14 @@ npm install
 
 2. Configure o arquivo `.env`:
 
+**Para usar com Backend Java (recomendado):**
+```env
+EXPO_PUBLIC_USE_MOCKS=false
+EXPO_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1
+EXPO_PUBLIC_ENVIRONMENT=development
+```
+
+**Para desenvolvimento com mocks:**
 ```env
 EXPO_PUBLIC_USE_MOCKS=true
 EXPO_PUBLIC_API_BASE_URL=https://api.sentineltrack.com/v1

@@ -1,19 +1,73 @@
-"use client"
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native"
-import { useTheme } from "../../contexts/ThemeContext"
-import { useAuth } from "../../contexts/AuthContext"
-import { Ionicons } from "@expo/vector-icons"
+"use client";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+} from "react-native";
+import { useTheme } from "../../contexts/ThemeContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useApi } from "../../hooks/useApi";
+import {
+  motorcycleService,
+  type Motorcycle,
+  type Alert as AlertItem,
+} from "../../services/motorcycleService";
+import { useCallback, useMemo } from "react";
 
 export function HomeScreen() {
-  const { colors } = useTheme()
-  const { user } = useAuth()
+  const { colors } = useTheme();
+  const { user } = useAuth();
+
+  const {
+    data: motorcycles,
+    loading: loadingMotos,
+    error: errorMotos,
+    execute: fetchMotos,
+  } = useApi<Motorcycle[]>(() => motorcycleService.getMotorcycles(), {
+    immediate: true,
+  });
+
+  const {
+    data: alerts,
+    loading: loadingAlerts,
+    error: errorAlerts,
+    execute: fetchAlerts,
+  } = useApi<AlertItem[]>(() => motorcycleService.getAlerts(), {
+    immediate: true,
+  });
+
+  const refreshing = loadingMotos || loadingAlerts;
+  const onRefresh = useCallback(() => {
+    fetchMotos();
+    fetchAlerts();
+  }, [fetchMotos, fetchAlerts]);
+
+  const activeCount = useMemo(
+    () =>
+      Array.isArray(motorcycles)
+        ? motorcycles.filter(m => m.status === "active").length
+        : 0,
+    [motorcycles]
+  );
 
   const stats = [
-    { title: "Motos Ativas", value: "24", icon: "bicycle", color: colors.primary },
-    { title: "Alertas Hoje", value: "3", icon: "warning", color: colors.destructive },
-    { title: "Eficiência", value: "94%", icon: "trending-up", color: colors.accent },
-    { title: "Economia", value: "R$ 2.4k", icon: "cash", color: colors.secondary },
-  ]
+    {
+      title: "Motos Ativas",
+      value: String(activeCount),
+      icon: "bicycle",
+      color: colors.primary,
+    },
+    {
+      title: "Alertas Hoje",
+      value: String(Array.isArray(alerts) ? alerts.length : 0),
+      icon: "warning",
+      color: colors.destructive,
+    },
+  ];
 
   const styles = StyleSheet.create({
     container: {
@@ -114,10 +168,19 @@ export function HomeScreen() {
       fontSize: 11,
       color: colors.mutedForeground,
     },
-  })
+  });
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={colors.mutedForeground}
+        />
+      }
+    >
       <View style={styles.header}>
         <Text style={styles.greeting}>Olá, {user?.name}!</Text>
         <Text style={styles.subtitle}>Bem-vindo ao SentinelTrack</Text>
@@ -126,7 +189,9 @@ export function HomeScreen() {
       <View style={styles.statsGrid}>
         {stats.map((stat, index) => (
           <TouchableOpacity key={index} style={styles.statCard}>
-            <View style={[styles.statIcon, { backgroundColor: stat.color + "20" }]}>
+            <View
+              style={[styles.statIcon, { backgroundColor: stat.color + "20" }]}
+            >
               <Ionicons name={stat.icon as any} size={24} color={stat.color} />
             </View>
             <Text style={styles.statValue}>{stat.value}</Text>
@@ -137,40 +202,37 @@ export function HomeScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Alertas Recentes</Text>
-
-        <TouchableOpacity style={styles.alertCard}>
-          <View style={styles.alertIcon}>
-            <Ionicons name="warning" size={20} color={colors.destructiveForeground} />
-          </View>
-          <View style={styles.alertContent}>
-            <Text style={styles.alertTitle}>Velocidade Excessiva</Text>
-            <Text style={styles.alertDescription}>Moto #MT-001 - Av. Paulista</Text>
-            <Text style={styles.alertTime}>há 15 minutos</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.alertCard}>
-          <View style={styles.alertIcon}>
-            <Ionicons name="location" size={20} color={colors.destructiveForeground} />
-          </View>
-          <View style={styles.alertContent}>
-            <Text style={styles.alertTitle}>Área Restrita</Text>
-            <Text style={styles.alertDescription}>Moto #MT-007 - Centro</Text>
-            <Text style={styles.alertTime}>há 32 minutos</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.alertCard}>
-          <View style={styles.alertIcon}>
-            <Ionicons name="time" size={20} color={colors.destructiveForeground} />
-          </View>
-          <View style={styles.alertContent}>
-            <Text style={styles.alertTitle}>Parada Prolongada</Text>
-            <Text style={styles.alertDescription}>Moto #MT-015 - Vila Madalena</Text>
-            <Text style={styles.alertTime}>há 1 hora</Text>
-          </View>
-        </TouchableOpacity>
+        {Array.isArray(alerts) && alerts.length > 0 ? (
+          alerts.slice(0, 5).map(a => (
+            <TouchableOpacity key={a.id} style={styles.alertCard}>
+              <View style={styles.alertIcon}>
+                <Ionicons
+                  name={
+                    a.type === "speed"
+                      ? "speedometer"
+                      : a.type === "location"
+                        ? "location"
+                        : a.type === "battery"
+                          ? "battery-dead"
+                          : "warning"
+                  }
+                  size={20}
+                  color={colors.destructiveForeground}
+                />
+              </View>
+              <View style={styles.alertContent}>
+                <Text style={styles.alertTitle}>{a.title}</Text>
+                <Text style={styles.alertDescription}>{a.description}</Text>
+                <Text style={styles.alertTime}>{a.timestamp}</Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={{ color: colors.mutedForeground }}>
+            Sem alertas recentes.
+          </Text>
+        )}
       </View>
     </ScrollView>
-  )
+  );
 }
