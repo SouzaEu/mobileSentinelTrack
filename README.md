@@ -1,148 +1,115 @@
-# SentinelTrack Mobile
+# 🚦 SentinelTrack — Gerenciador de Motos em Pátios
 
-Sistema de monitoramento de frotas de motocicletas desenvolvido em React Native.
+SentinelTrack é uma aplicação mobile desenvolvida com **React Native (Expo)** para organizar e controlar motocicletas em pátios logísticos da Mottu. O app permite o cadastro de motos com localização por vaga, visualização em painel de controle (dashboard), geração de relatórios e exportação em PDF ou CSV.
 
-## Proposta do Projeto
+---
 
-O SentinelTrack Mobile é um aplicativo desenvolvido para facilitar o gerenciamento e monitoramento de frotas de motocicletas em tempo real. A solução oferece uma interface intuitiva para controle completo dos veículos, permitindo acompanhar status, localização, bateria e receber alertas importantes.
+## 📱 Funcionalidades
 
-O projeto foi desenvolvido como parte da disciplina de Mobile Development, implementando as melhores práticas de desenvolvimento React Native com TypeScript, arquitetura modular e integração com APIs.
+- ✅ Login com FireBase 
+- ✅ Cadastro de motos com vaga, placa e data/hora
+- ✅ Validação de vaga disponível
+- ✅ Dashboard com visualização em matriz (Setor A)
+- ✅ Exportação de relatórios filtrados por data, placa e setor
+- ✅ Geração de PDF e CSV dos registros
+- ✅ Persistência no banco de dados
 
-### Funcionalidades
+---
 
-- Autenticação de usuários (login/cadastro)
-- Gerenciamento completo de motocicletas (CRUD)
-- Monitoramento de status, localização e bateria
-- Sistema de alertas e notificações
-- Tema claro e escuro
-- Interface responsiva
+## 👥 Participantes
 
-## Tecnologias
+| Nome               | RM      |
+|--------------------|---------|
+| Thomaz Oliveira    | 555323  |
+| Vinicius Souza     | 556089  |
+| Gabriel Duarte     | 556972  |
 
-- **React Native** 0.74.5
-- **Expo** ~51.0.0
-- **TypeScript** ~5.3.3
-- **React Navigation** 6.x
-- **Expo Secure Store** (armazenamento seguro)
-- **AsyncStorage** (cache e persistência)
-- **Vector Icons** (Ionicons)
+---
 
-## Pré-requisitos
+## 🛠️ Tecnologias Utilizadas
 
-- Node.js 18+
-- npm ou yarn
-- Expo CLI
+- React Native + Expo
+- React Navigation (Drawer)
+- AsyncStorage
+- Expo Print & Sharing
+- Picker (React Native Picker)
 
-## Instalação
 
-1. Instale as dependências:
+---
+
+## 🧪 Pré-requisitos
+
+- Node.js e npm instalados
+- Expo CLI instalado:
+```bash
+npm install -g expo-cli
+```
+
+---
+
+## ▶️ Como Rodar o Projeto
 
 ```bash
+# 1. Clone o repositório
+git clone https://github.com/SouzaEu/mobileSentinelTrack
+
+# 2. Acesse a pasta do projeto
+cd SentinelTrack
+
+# 3. Instale as dependências
 npm install
-```
 
-2. Configure o arquivo `.env`:
-
-**Para usar com Backend Java (recomendado):**
-```env
-EXPO_PUBLIC_USE_MOCKS=false
-EXPO_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1
-EXPO_PUBLIC_ENVIRONMENT=development
-```
-
-**Para desenvolvimento com mocks:**
-```env
-EXPO_PUBLIC_USE_MOCKS=true
-EXPO_PUBLIC_API_BASE_URL=https://api.sentineltrack.com/v1
-EXPO_PUBLIC_ENVIRONMENT=development
-```
-
-3. Execute o projeto:
-
-```bash
-# Web
-npm run web
-
-# Mobile
+# 4. Inicie o projeto
 npx expo start
 ```
 
-## Como Usar
+> Escaneie o QR code com o aplicativo **Expo Go** no seu celular para testar a aplicação.
 
-### Credenciais de Teste
+---
 
-- Email: admin@test.com
-- Senha: 123456
 
-### Funcionalidades
 
-- Dashboard com estatísticas da frota
-- Cadastro e gerenciamento de motocicletas
-- Sistema de alertas em tempo real
-- Alternância entre tema claro e escuro
-
-## Estrutura de Pastas
+## 📂 Estrutura de Pastas
 
 ```
-sentineltrack-mobile/
-├── src/
-│   ├── components/          # Componentes reutilizáveis
-│   │   ├── ui/             # Componentes base (Button, Card, Input)
-│   │   ├── AnimatedCard.tsx # Componente com animações
-│   │   └── ErrorBoundary.tsx # Tratamento de erros
-│   ├── contexts/           # Gerenciamento de estado global
-│   │   ├── AuthContext.tsx # Contexto de autenticação
-│   │   └── ThemeContext.tsx # Contexto de tema
-│   ├── hooks/              # Hooks customizados
-│   │   ├── useApi.ts       # Hook para requisições API
-│   │   └── useAnimatedValue.ts # Hook para animações
-│   ├── navigation/         # Configuração de navegação
-│   │   └── AppNavigator.tsx # Navegação principal
-│   ├── screens/            # Telas da aplicação
-│   │   ├── auth/           # Telas de autenticação
-│   │   │   ├── LoginScreen.tsx
-│   │   │   └── RegisterScreen.tsx
-│   │   └── main/           # Telas principais
-│   │       ├── HomeScreen.tsx
-│   │       ├── MotorcyclesScreen.tsx
-│   │       ├── AddMotorcycleScreen.tsx
-│   │       ├── EditMotorcycleScreen.tsx
-│   │       ├── MotorcycleDetailScreen.tsx
-│   │       └── ProfileScreen.tsx
-│   ├── services/           # Integração com APIs
-│   │   ├── api.ts          # Cliente HTTP base
-│   │   ├── authService.ts  # Serviços de autenticação
-│   │   └── motorcycleService.ts # Serviços de motos
-│   ├── utils/              # Utilitários e helpers
-│   │   ├── storage.ts      # Wrapper de armazenamento
-│   │   └── theme.ts        # Utilitários de tema
-│   └── constants/          # Constantes da aplicação
-│       └── index.ts        # Configurações e validações
-├── assets/                 # Recursos estáticos
-├── docs/                   # Documentação adicional
-├── .env.example           # Exemplo de variáveis de ambiente
-├── package.json           # Dependências do projeto
-└── README.md              # Este arquivo
+SentinelTrack-app/
+├── assets/
+├── components/
+    ├── CustomDrawerContent.js
+├── contexts/
+    ├── ThemeContext.js/
+├── screens/
+│   ├── LoginScreen.js
+│   ├── DashboardScreen.js
+│   ├── CadastroMotoScreen.js
+    ├── RegisterScreen.js
+│   ├── RelatorioScreen.js
+├── services/
+    └── api/
+        └── client.js
+        └── motorcycles.js
+        └── movements.js
+        └── sectors.js
+        └── validators.js
+│   └── firebaseConfig.js
+├── App.js
+├── App.jason
+├── index.js
+└── README.md
 ```
 
-## Vídeo de Demonstração
+---
 
-O vídeo demonstrativo do aplicativo em funcionamento está disponível e apresenta:
+## 📌 Observações
 
-- Processo completo de login e autenticação
-- Navegação entre todas as telas do aplicativo
-- Funcionalidades de CRUD de motocicletas (criar, visualizar, editar, excluir)
-- Dashboard com estatísticas em tempo real
-- Sistema de alertas e notificações
-- Alternância entre tema claro e escuro
-- Interface responsiva e animações
+- Este projeto foi desenvolvido como parte do **Challenge FIAP 2025 - 2º Semestre**.
+- Futuramente, o app será integrado à visão computacional com Roboflow para leitura automática de placas e ocupação de vagas.
 
-**Nota**: O vídeo será gravado demonstrando o aplicativo rodando no navegador web (Expo Web) para facilitar a visualização de todas as funcionalidades.
+---
 
-## Equipe
+## 📸 Layouts
 
-| Nome                              | RM       | GitHub                                             |
-| --------------------------------- | -------- | -------------------------------------------------- |
-| Thomaz Oliveira Vilas Boas Bartol | RM555323 | [@thomazbartol](https://github.com/thomazbartol)   |
-| Vinicius Souza Carvalho           | RM556089 | [@SouzaEu](https://github.com/SouzaEu)             |
-| Gabriel Duarte Pinto              | RM556972 | [@gabrielduar7e](https://github.com/gabrielduar7e) |
+Veja os protótipos do aplicativo no diretório `https://www.figma.com/design/zptG61AfTIbSgTyU5iikMC/SentinelTrack?t=Ti5OWWc5xpS5SH17-0` ou na apresentação oficial do projeto.
+
+---
+
