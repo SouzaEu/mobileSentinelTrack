@@ -1,5 +1,5 @@
 // App.js
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -11,6 +11,13 @@ import RegisterScreen from "./screens/RegisterScreen";
 import DashboardScreen from "./screens/DashboardScreen";
 import CadastroMotoScreen from "./screens/CadastroMotoScreen";
 import RelatoriosScreen from "./screens/RelatoriosScreen";
+import AboutScreen from "./screens/AboutScreen";
+import MotorcycleManagementScreen from "./screens/MotorcycleManagementScreen";
+
+// Importações para i18n e notificações
+import i18n, { setupI18n, changeLanguage, getCurrentLanguage, getAvailableLanguages } from "./services/i18n";
+import { registerForPushNotificationsAsync } from "./services/notificationService";
+import * as Notifications from 'expo-notifications';
 
 import { ThemeProvider, ThemeContext } from "./contexts/ThemeContext";
 
@@ -25,7 +32,9 @@ import {
   StyleSheet,
   Switch,
   Image,
+  Alert,
 } from "react-native";
+import { Picker } from '@react-native-picker/picker';
 
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -35,7 +44,18 @@ const Stack = createStackNavigator();
 
 function CustomDrawerContent(props) {
   const { usuario, onLogout, toggleTheme, theme } = props;
+  const [currentLanguage, setCurrentLanguage] = useState(getCurrentLanguage());
   const isDark = (theme?.background ?? "#000") !== "#fff";
+
+  const handleLanguageChange = async (language) => {
+    await changeLanguage(language);
+    setCurrentLanguage(language);
+    // Força re-render do app
+    props.navigation.reset({
+      index: 0,
+      routes: [{ name: 'Dashboard' }],
+    });
+  };
 
   return (
     <DrawerContentScrollView
@@ -75,6 +95,32 @@ function CustomDrawerContent(props) {
 
       {/* Ações rápidas no rodapé */}
       <View style={styles.footer}>
+        {/* Seletor de idioma */}
+        <View style={[styles.rowButton, { backgroundColor: theme.inputBackground }]}>
+          <View style={styles.rowLeft}>
+            <Ionicons
+              name="language"
+              size={22}
+              color={theme.primary}
+              style={{ marginRight: 10 }}
+            />
+            <Text style={[styles.rowText, { color: theme.text }]}>
+              Idioma
+            </Text>
+          </View>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={currentLanguage}
+              onValueChange={handleLanguageChange}
+              style={[styles.picker, { color: theme.text }]}
+              dropdownIconColor={theme.text}
+            >
+              <Picker.Item label="Português" value="pt" />
+              <Picker.Item label="Español" value="es" />
+            </Picker>
+          </View>
+        </View>
+
         {/* Alternar tema */}
         <TouchableOpacity
           activeOpacity={0.8}
@@ -89,7 +135,7 @@ function CustomDrawerContent(props) {
               style={{ marginRight: 10 }}
             />
             <Text style={[styles.rowText, { color: theme.text }]}>
-              {isDark ? "Tema escuro" : "Tema claro"}
+              {isDark ? i18n.t('theme.darkTheme') : i18n.t('theme.lightTheme')}
             </Text>
           </View>
           <Switch
@@ -113,7 +159,7 @@ function CustomDrawerContent(props) {
               color="#F44336"
               style={{ marginRight: 10 }}
             />
-            <Text style={[styles.rowText, { color: theme.text }]}>Sair</Text>
+            <Text style={[styles.rowText, { color: theme.text }]}>{i18n.t('auth.logout')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={18} color={theme.text} />
         </TouchableOpacity>
@@ -154,7 +200,7 @@ function AppDrawer({ usuario, onLogout }) {
           drawerIcon: ({ color, size }) => (
             <Ionicons name="speedometer" size={size} color={color} />
           ),
-          title: "Dashboard",
+          title: i18n.t('navigation.dashboard'),
         }}
       />
       <Drawer.Screen
@@ -167,6 +213,7 @@ function AppDrawer({ usuario, onLogout }) {
               color={color}
             />
           ),
+          title: i18n.t('navigation.motorcycles'),
         }}
       >
         {() => <CadastroMotoScreen userRM={usuario?.rm} />}
@@ -178,6 +225,27 @@ function AppDrawer({ usuario, onLogout }) {
           drawerIcon: ({ color, size }) => (
             <Ionicons name="stats-chart" size={size} color={color} />
           ),
+          title: i18n.t('navigation.reports'),
+        }}
+      />
+      <Drawer.Screen
+        name="Gerenciar Motos"
+        component={MotorcycleManagementScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="motorbike-electric" size={size} color={color} />
+          ),
+          title: "Gerenciar Motos",
+        }}
+      />
+      <Drawer.Screen
+        name="Sobre o App"
+        component={AboutScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="information-circle" size={size} color={color} />
+          ),
+          title: i18n.t('navigation.about'),
         }}
       />
     </Drawer.Navigator>
@@ -206,18 +274,51 @@ function AuthStack({ handleLoginSuccess }) {
 export default function App() {
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
-  // Restaura sessão do AsyncStorage
+  // Inicialização do app
   useEffect(() => {
-    const checkLogin = async () => {
+    const initializeApp = async () => {
       try {
+        // Configurar i18n
+        await setupI18n();
+        
+        // Registrar para notificações push
+        const token = await registerForPushNotificationsAsync();
+        setExpoPushToken(token);
+        
+        // Configurar listeners de notificação
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+          console.log('Notification received:', notification);
+        });
+        
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+          console.log('Notification response:', response);
+        });
+        
+        // Restaurar sessão do usuário
         const user = await AsyncStorage.getItem("usuarioLogado");
         if (user) setUsuario(JSON.parse(user));
+      } catch (error) {
+        console.error('Error initializing app:', error);
       } finally {
         setLoading(false);
       }
     };
-    checkLogin();
+    
+    initializeApp();
+    
+    // Cleanup
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
+    };
   }, []);
 
   // Normaliza e salva o usuário (usado por Login e Register)
@@ -302,5 +403,13 @@ const styles = StyleSheet.create({
   rowText: {
     fontSize: 15,
     fontWeight: "600",
+  },
+  pickerContainer: {
+    width: 120,
+    height: 40,
+  },
+  picker: {
+    width: '100%',
+    height: '100%',
   },
 });
