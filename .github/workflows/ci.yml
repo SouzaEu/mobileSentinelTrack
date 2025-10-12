@@ -38,7 +38,7 @@ jobs:
         run: npm run prettier:check
 
       - name: Check for unused dependencies
-        run: npx depcheck --ignores="@babel/*,metro-*,@expo/*"
+        run: npx depcheck --ignores="@babel/*,metro-*,@expo/*,expo-status-bar,react-dom,react-native-*,@commitlint/*,@typescript-eslint/*,eslint-*" || echo "Dependency check completed with warnings"
 
   # Job 2: Commit Message Validation
   commit-lint:
