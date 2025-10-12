@@ -1,0 +1,355 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job 1: Lint e Code Quality
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Prettier check
+        run: npm run prettier:check
+
+      - name: Check for unused dependencies
+        run: npx depcheck --ignores="@babel/*,metro-*,@expo/*"
+
+  # Job 2: Commit Message Validation
+  commit-lint:
+    name: Validate Commit Messages
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Validate commit messages
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+  # Job 3: Security Audit
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+
+      - name: Check for known vulnerabilities
+        run: npx audit-ci --moderate
+
+  # Job 4: Build Validation
+  build:
+    name: Build Validation
+    runs-on: ubuntu-latest
+    needs: [lint]
+    
+    strategy:
+      matrix:
+        platform: [android, ios]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Setup Expo CLI
+        run: npm install -g @expo/cli
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Verify Expo configuration
+        run: npx expo config --type public
+
+      - name: Check for build errors (dry run)
+        run: npx expo export --platform ${{ matrix.platform }} --output-dir dist/${{ matrix.platform }} --clear
+
+  # Job 5: Code Analysis
+  analysis:
+    name: Code Analysis
+    runs-on: ubuntu-latest
+    needs: [lint]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Analyze bundle size
+        run: |
+          npx expo export --output-dir dist --clear
+          du -sh dist/
+          find dist/ -name "*.js" -exec wc -c {} + | sort -n | tail -10
+
+      - name: Check for duplicate dependencies
+        run: npx npm-check-duplicates
+
+      - name: Validate package.json
+        run: npx package-json-validator package.json
+
+  # Job 6: Integration Tests
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [build]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Validate API endpoints
+        run: |
+          echo "Validating API service files..."
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const apiDir = './services/api';
+            const files = fs.readdirSync(apiDir);
+            files.forEach(file => {
+              if (file.endsWith('.js')) {
+                try {
+                  require(path.join('../', apiDir, file));
+                  console.log('✓', file, 'is valid');
+                } catch (e) {
+                  console.error('✗', file, 'has errors:', e.message);
+                  process.exit(1);
+                }
+              }
+            });
+          "
+
+      - name: Validate i18n files
+        run: |
+          echo "Validating translation files..."
+          node -e "
+            const fs = require('fs');
+            const ptTranslations = JSON.parse(fs.readFileSync('./locales/pt.json', 'utf8'));
+            const esTranslations = JSON.parse(fs.readFileSync('./locales/es.json', 'utf8'));
+            
+            function getKeys(obj, prefix = '') {
+              let keys = [];
+              for (let key in obj) {
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                  keys = keys.concat(getKeys(obj[key], prefix + key + '.'));
+                } else {
+                  keys.push(prefix + key);
+                }
+              }
+              return keys;
+            }
+            
+            const ptKeys = getKeys(ptTranslations).sort();
+            const esKeys = getKeys(esTranslations).sort();
+            
+            if (JSON.stringify(ptKeys) !== JSON.stringify(esKeys)) {
+              console.error('Translation keys mismatch between PT and ES');
+              console.error('PT keys:', ptKeys.length);
+              console.error('ES keys:', esKeys.length);
+              process.exit(1);
+            }
+            
+            console.log('✓ Translation files are consistent');
+            console.log('Total translation keys:', ptKeys.length);
+          "
+
+  # Job 7: Performance Check
+  performance:
+    name: Performance Analysis
+    runs-on: ubuntu-latest
+    needs: [build]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Analyze JavaScript bundle
+        run: |
+          npx expo export --output-dir dist --clear
+          echo "Bundle analysis:"
+          find dist -name "*.js" -type f -exec sh -c 'echo "File: $1, Size: $(wc -c < "$1") bytes"' _ {} \;
+          
+          total_size=$(find dist -name "*.js" -type f -exec wc -c {} + | tail -1 | awk '{print $1}')
+          echo "Total JS bundle size: $total_size bytes"
+          
+          # Warning if bundle is too large (>5MB)
+          if [ "$total_size" -gt 5242880 ]; then
+            echo "⚠️  Warning: Bundle size is larger than 5MB"
+          else
+            echo "✓ Bundle size is acceptable"
+          fi
+
+      - name: Check for large assets
+        run: |
+          echo "Checking for large assets..."
+          find . -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.gif" \) -size +500k -exec ls -lh {} \;
+
+  # Job 8: Deployment Readiness
+  deployment-check:
+    name: Deployment Readiness
+    runs-on: ubuntu-latest
+    needs: [lint, security, build, integration]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Validate app.json
+        run: |
+          node -e "
+            const appConfig = require('./app.json');
+            const required = ['name', 'slug', 'version'];
+            
+            required.forEach(field => {
+              if (!appConfig.expo[field]) {
+                console.error('Missing required field:', field);
+                process.exit(1);
+              }
+            });
+            
+            console.log('✓ app.json is valid');
+            console.log('App name:', appConfig.expo.name);
+            console.log('Version:', appConfig.expo.version);
+          "
+
+      - name: Validate EAS configuration
+        run: |
+          if [ -f "eas.json" ]; then
+            node -e "
+              const easConfig = require('./eas.json');
+              if (!easConfig.build) {
+                console.error('Missing build configuration in eas.json');
+                process.exit(1);
+              }
+              console.log('✓ eas.json is valid');
+            "
+          else
+            echo "⚠️  eas.json not found - deployment may not work"
+          fi
+
+      - name: Check environment variables
+        run: |
+          echo "Checking for required environment variables..."
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "⚠️  EXPO_TOKEN not set - needed for deployment"
+          fi
+
+  # Job 9: Final Status Check
+  status-check:
+    name: Final Status
+    runs-on: ubuntu-latest
+    needs: [lint, commit-lint, security, build, analysis, integration, performance]
+    if: always()
+    
+    steps:
+      - name: Check all jobs status
+        run: |
+          echo "Job Results:"
+          echo "Lint: ${{ needs.lint.result }}"
+          echo "Commit Lint: ${{ needs.commit-lint.result }}"
+          echo "Security: ${{ needs.security.result }}"
+          echo "Build: ${{ needs.build.result }}"
+          echo "Analysis: ${{ needs.analysis.result }}"
+          echo "Integration: ${{ needs.integration.result }}"
+          echo "Performance: ${{ needs.performance.result }}"
+          
+          if [[ "${{ needs.lint.result }}" == "failure" || 
+                "${{ needs.security.result }}" == "failure" || 
+                "${{ needs.build.result }}" == "failure" || 
+                "${{ needs.integration.result }}" == "failure" ]]; then
+            echo "❌ Pipeline failed - blocking merge"
+            exit 1
+          else
+            echo "✅ All critical checks passed"
+          fi

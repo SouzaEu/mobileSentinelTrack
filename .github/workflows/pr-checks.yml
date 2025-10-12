@@ -1,0 +1,216 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main, develop]
+
+jobs:
+  # PR Information
+  pr-info:
+    name: PR Information
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: PR Details
+        run: |
+          echo "## Pull Request Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Title:** ${{ github.event.pull_request.title }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Author:** ${{ github.event.pull_request.user.login }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Base:** ${{ github.event.pull_request.base.ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Head:** ${{ github.event.pull_request.head.ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Files Changed:** ${{ github.event.pull_request.changed_files }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Additions:** +${{ github.event.pull_request.additions }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deletions:** -${{ github.event.pull_request.deletions }}" >> $GITHUB_STEP_SUMMARY
+
+  # PR Title Validation
+  pr-title-check:
+    name: Validate PR Title
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check PR title format
+        run: |
+          title="${{ github.event.pull_request.title }}"
+          
+          # Check if title follows conventional commit format
+          if [[ $title =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+ ]]; then
+            echo "✅ PR title follows conventional commit format"
+          else
+            echo "❌ PR title should follow conventional commit format"
+            echo "Examples:"
+            echo "  feat: add new motorcycle validation"
+            echo "  fix: resolve clipboard issue on iOS"
+            echo "  docs: update README with deployment instructions"
+            exit 1
+          fi
+
+  # Check for breaking changes
+  breaking-changes:
+    name: Check Breaking Changes
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for breaking changes
+        run: |
+          # Check if PR title or description mentions breaking changes
+          title="${{ github.event.pull_request.title }}"
+          body="${{ github.event.pull_request.body }}"
+          
+          if [[ $title =~ "BREAKING CHANGE" ]] || [[ $body =~ "BREAKING CHANGE" ]]; then
+            echo "⚠️ This PR contains breaking changes"
+            echo "Please ensure:"
+            echo "1. Version is bumped appropriately"
+            echo "2. Migration guide is provided"
+            echo "3. Changelog is updated"
+          else
+            echo "✅ No breaking changes detected"
+          fi
+
+  # File changes analysis
+  file-changes:
+    name: Analyze File Changes
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyze changed files
+        run: |
+          echo "## Changed Files Analysis" >> $GITHUB_STEP_SUMMARY
+          
+          # Get list of changed files
+          git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} > changed_files.txt
+          
+          # Categorize changes
+          config_files=$(grep -E '\.(json|js|yml|yaml)$' changed_files.txt | grep -E '(package\.json|app\.json|eas\.json|\.eslintrc|\.prettierrc|commitlint\.config\.js)' || true)
+          source_files=$(grep -E '\.(js|jsx|ts|tsx)$' changed_files.txt | grep -v -E '(test|spec)' || true)
+          test_files=$(grep -E '\.(test|spec)\.(js|jsx|ts|tsx)$' changed_files.txt || true)
+          doc_files=$(grep -E '\.(md|txt)$' changed_files.txt || true)
+          
+          if [ ! -z "$config_files" ]; then
+            echo "### 🔧 Configuration Files" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$config_files" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ ! -z "$source_files" ]; then
+            echo "### 📝 Source Files" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$source_files" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ ! -z "$test_files" ]; then
+            echo "### 🧪 Test Files" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$test_files" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ ! -z "$doc_files" ]; then
+            echo "### 📚 Documentation" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$doc_files" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Check for TODO/FIXME comments
+  todo-check:
+    name: Check for TODO/FIXME
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for TODO/FIXME comments
+        run: |
+          echo "Checking for TODO/FIXME comments..."
+          
+          todos=$(grep -r -n -E "(TODO|FIXME|XXX|HACK)" --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" . || true)
+          
+          if [ ! -z "$todos" ]; then
+            echo "⚠️ Found TODO/FIXME comments:"
+            echo "$todos"
+            echo ""
+            echo "Please consider:"
+            echo "1. Addressing these items before merging"
+            echo "2. Creating issues for items that can't be fixed now"
+            echo "3. Adding context about why they exist"
+          else
+            echo "✅ No TODO/FIXME comments found"
+          fi
+
+  # Check PR size
+  pr-size:
+    name: Check PR Size
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Evaluate PR size
+        run: |
+          files_changed=${{ github.event.pull_request.changed_files }}
+          additions=${{ github.event.pull_request.additions }}
+          deletions=${{ github.event.pull_request.deletions }}
+          
+          echo "## PR Size Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- Files changed: $files_changed" >> $GITHUB_STEP_SUMMARY
+          echo "- Lines added: $additions" >> $GITHUB_STEP_SUMMARY
+          echo "- Lines deleted: $deletions" >> $GITHUB_STEP_SUMMARY
+          
+          total_changes=$((additions + deletions))
+          
+          if [ $files_changed -gt 20 ] || [ $total_changes -gt 500 ]; then
+            echo "### ⚠️ Large PR Warning" >> $GITHUB_STEP_SUMMARY
+            echo "This PR is quite large. Consider:" >> $GITHUB_STEP_SUMMARY
+            echo "- Breaking it into smaller PRs" >> $GITHUB_STEP_SUMMARY
+            echo "- Ensuring thorough testing" >> $GITHUB_STEP_SUMMARY
+            echo "- Adding detailed description" >> $GITHUB_STEP_SUMMARY
+          elif [ $total_changes -gt 200 ]; then
+            echo "### 📏 Medium-sized PR" >> $GITHUB_STEP_SUMMARY
+            echo "This PR has a moderate size. Please ensure adequate testing." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ✅ Small PR" >> $GITHUB_STEP_SUMMARY
+            echo "This PR has a manageable size." >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Dependency changes check
+  dependency-check:
+    name: Check Dependency Changes
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for dependency changes
+        run: |
+          if git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} | grep -q "package.json"; then
+            echo "📦 package.json was modified"
+            
+            # Show dependency changes
+            echo "## Dependency Changes" >> $GITHUB_STEP_SUMMARY
+            echo '```diff' >> $GITHUB_STEP_SUMMARY
+            git diff ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} package.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            
+            echo "Please ensure:" >> $GITHUB_STEP_SUMMARY
+            echo "- New dependencies are necessary" >> $GITHUB_STEP_SUMMARY
+            echo "- Versions are pinned appropriately" >> $GITHUB_STEP_SUMMARY
+            echo "- Security audit passes" >> $GITHUB_STEP_SUMMARY
+            echo "- Bundle size impact is acceptable" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No dependency changes"
+          fi
