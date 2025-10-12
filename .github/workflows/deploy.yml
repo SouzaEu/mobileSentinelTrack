@@ -1,9 +1,10 @@
 name: Deploy to Firebase App Distribution
 
 on:
-  push:
-    branches: [main]
-    tags: ['v*']
+  # Desabilitado temporariamente - requer configuração de secrets
+  # push:
+  #   branches: [main]
+  #   tags: ['v*']
   workflow_dispatch:
     inputs:
       environment:
