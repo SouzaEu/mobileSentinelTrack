@@ -26,31 +26,31 @@ export async function registerForPushNotificationsAsync() {
   }
 
   if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
-    
+
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
-    
+
     if (finalStatus !== 'granted') {
-      
       return;
     }
-    
+
     try {
-      const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+      const projectId =
+        Constants?.expoConfig?.extra?.eas?.projectId ??
+        Constants?.easConfig?.projectId;
       if (!projectId) {
         throw new Error('Project ID not found');
       }
       token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-      
     } catch (e) {
       token = `${e}`;
     }
   } else {
-    
   }
 
   return token;
@@ -68,9 +68,7 @@ export async function sendLocalNotification(title, body, data = {}) {
       },
       trigger: null, // Enviar imediatamente
     });
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 }
 
 // Função para agendar notificação
@@ -88,27 +86,21 @@ export async function scheduleNotification(title, body, seconds, data = {}) {
       },
     });
     return id;
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 }
 
 // Função para cancelar notificação agendada
 export async function cancelNotification(notificationId) {
   try {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 }
 
 // Função para cancelar todas as notificações agendadas
 export async function cancelAllNotifications() {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 }
 
 // Tipos de notificações específicas do app
@@ -128,7 +120,7 @@ export const sendMotorcycleNotification = {
       { type: NotificationTypes.NEW_MOTORCYCLE, plate, sector, spot }
     );
   },
-  
+
   motorcycleRemoved: (plate, sector, spot) => {
     sendLocalNotification(
       'Moto Removida',
@@ -136,7 +128,7 @@ export const sendMotorcycleNotification = {
       { type: NotificationTypes.MOTORCYCLE_REMOVED, plate, sector, spot }
     );
   },
-  
+
   spotAvailable: (sector, spot) => {
     sendLocalNotification(
       'Vaga Disponível',
@@ -144,8 +136,8 @@ export const sendMotorcycleNotification = {
       { type: NotificationTypes.SPOT_AVAILABLE, sector, spot }
     );
   },
-  
-  maintenanceReminder: (plate) => {
+
+  maintenanceReminder: plate => {
     sendLocalNotification(
       'Lembrete de Manutenção',
       `A moto ${plate} precisa de manutenção`,

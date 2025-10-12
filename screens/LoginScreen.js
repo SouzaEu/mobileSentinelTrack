@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -6,20 +6,19 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-} from "react-native";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../services/firebaseConfig";
-import { useNavigation } from "@react-navigation/native";
-import { ThemeContext } from "../contexts/ThemeContext";
+} from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../services/firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
+import { ThemeContext } from '../contexts/ThemeContext';
 
 export default function LoginScreen({ onLoginSuccess }) {
   const { theme } = useContext(ThemeContext);
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
   const navigation = useNavigation();
 
   const handleLogin = async () => {
-    
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -27,10 +26,10 @@ export default function LoginScreen({ onLoginSuccess }) {
         senha
       );
       const user = userCredential.user;
-      
+
       onLoginSuccess?.(user);
     } catch (error) {
-      Alert.alert("Erro", "Falha no login");
+      Alert.alert('Erro', 'Falha no login');
     }
   };
 
@@ -100,7 +99,7 @@ export default function LoginScreen({ onLoginSuccess }) {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
         <Text style={[styles.register, { color: theme.primary }]}>
           Criar conta
         </Text>
@@ -116,21 +115,21 @@ export default function LoginScreen({ onLoginSuccess }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     paddingHorizontal: 30,
   },
   logo: {
     fontSize: 36,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     marginBottom: 40,
   },
   logoHighlight: {
-    color: "#B6FF00",
+    color: '#B6FF00',
   },
   inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: 10,
     paddingHorizontal: 10,
     marginBottom: 15,
@@ -148,17 +147,17 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: {
-    textAlign: "center",
-    fontWeight: "bold",
+    textAlign: 'center',
+    fontWeight: 'bold',
     fontSize: 16,
   },
   forgot: {
-    textAlign: "center",
+    textAlign: 'center',
     marginTop: 20,
   },
   register: {
-    textAlign: "center",
+    textAlign: 'center',
     marginTop: 15,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });

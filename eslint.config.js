@@ -1,13 +1,6 @@
 module.exports = [
   {
-    ignores: [
-      'node_modules/',
-      'android/',
-      'ios/',
-      '.expo/',
-      'dist/',
-      'build/',
-    ],
+    ignores: ['node_modules/', 'android/', 'ios/', '.expo/', 'dist/', 'build/'],
   },
   {
     files: ['**/*.{js,jsx}'],
@@ -39,16 +32,16 @@ module.exports = [
     rules: {
       // General - mais permissivo para evitar falhas no CI
       'no-unused-vars': 'off', // Desabilitado temporariamente
-      'no-console': 'off',     // Desabilitado temporariamente
+      'no-console': 'off', // Desabilitado temporariamente
       'no-debugger': 'error',
-      'no-alert': 'off',       // Desabilitado temporariamente
+      'no-alert': 'off', // Desabilitado temporariamente
       'prefer-const': 'error',
       'no-var': 'error',
-      
+
       // Disable some rules that might conflict
       'comma-dangle': 'off',
-      'quotes': 'off',
-      'semi': 'off',
+      quotes: 'off',
+      semi: 'off',
     },
   },
 ];

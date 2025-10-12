@@ -15,7 +15,7 @@ jobs:
   lint:
     name: Code Quality & Linting
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -45,7 +45,7 @@ jobs:
     name: Validate Commit Messages
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -68,7 +68,7 @@ jobs:
   security:
     name: Security Audit
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -93,11 +93,11 @@ jobs:
     name: Build Validation
     runs-on: ubuntu-latest
     needs: [lint]
-    
+
     strategy:
       matrix:
         platform: [android, ios]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -125,7 +125,7 @@ jobs:
     name: Code Analysis
     runs-on: ubuntu-latest
     needs: [lint]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -156,7 +156,7 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-latest
     needs: [build]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -230,7 +230,7 @@ jobs:
     name: Performance Analysis
     runs-on: ubuntu-latest
     needs: [build]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -249,10 +249,10 @@ jobs:
           npx expo export --output-dir dist --clear
           echo "Bundle analysis:"
           find dist -name "*.js" -type f -exec sh -c 'echo "File: $1, Size: $(wc -c < "$1") bytes"' _ {} \;
-          
+
           total_size=$(find dist -name "*.js" -type f -exec wc -c {} + | tail -1 | awk '{print $1}')
           echo "Total JS bundle size: $total_size bytes"
-          
+
           # Warning if bundle is too large (>5MB)
           if [ "$total_size" -gt 5242880 ]; then
             echo "⚠️  Warning: Bundle size is larger than 5MB"
@@ -271,7 +271,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint, security, build, integration]
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -329,9 +329,10 @@ jobs:
   status-check:
     name: Final Status
     runs-on: ubuntu-latest
-    needs: [lint, commit-lint, security, build, analysis, integration, performance]
+    needs:
+      [lint, commit-lint, security, build, analysis, integration, performance]
     if: always()
-    
+
     steps:
       - name: Check all jobs status
         run: |
@@ -343,7 +344,7 @@ jobs:
           echo "Analysis: ${{ needs.analysis.result }}"
           echo "Integration: ${{ needs.integration.result }}"
           echo "Performance: ${{ needs.performance.result }}"
-          
+
           if [[ "${{ needs.lint.result }}" == "failure" || 
                 "${{ needs.security.result }}" == "failure" || 
                 "${{ needs.build.result }}" == "failure" || 

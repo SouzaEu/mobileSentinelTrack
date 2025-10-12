@@ -41,11 +41,11 @@ const developers = [
 export default function AboutScreen() {
   const { theme } = useContext(ThemeContext);
 
-  const openLink = (url) => {
+  const openLink = url => {
     Linking.openURL(url);
   };
 
-  const copyToClipboard = async (text) => {
+  const copyToClipboard = async text => {
     try {
       await Clipboard.setString(text);
       Alert.alert('Sucesso', 'Hash copiado para a área de transferência');
@@ -55,7 +55,9 @@ export default function AboutScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.inputBackground }]}>
         <View style={styles.logoContainer}>
@@ -78,10 +80,16 @@ export default function AboutScreen() {
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
           Informações do App
         </Text>
-        
-        <View style={[styles.infoCard, { backgroundColor: theme.inputBackground }]}>
+
+        <View
+          style={[styles.infoCard, { backgroundColor: theme.inputBackground }]}
+        >
           <View style={styles.infoRow}>
-            <Ionicons name="information-circle" size={20} color={theme.primary} />
+            <Ionicons
+              name="information-circle"
+              size={20}
+              color={theme.primary}
+            />
             <Text style={[styles.infoLabel, { color: theme.text }]}>
               {i18n.t('about.version')}:
             </Text>
@@ -89,7 +97,7 @@ export default function AboutScreen() {
               {APP_VERSION}
             </Text>
           </View>
-          
+
           <TouchableOpacity
             style={styles.infoRow}
             onPress={() => copyToClipboard(COMMIT_HASH)}
@@ -98,7 +106,13 @@ export default function AboutScreen() {
             <Text style={[styles.infoLabel, { color: theme.text }]}>
               {i18n.t('about.commitHash')}:
             </Text>
-            <Text style={[styles.infoValue, styles.monospace, { color: theme.primary }]}>
+            <Text
+              style={[
+                styles.infoValue,
+                styles.monospace,
+                { color: theme.primary },
+              ]}
+            >
               {COMMIT_HASH.substring(0, 8)}...
             </Text>
             <Ionicons name="copy" size={16} color={theme.text} />
@@ -111,11 +125,14 @@ export default function AboutScreen() {
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
           {i18n.t('about.developers')}
         </Text>
-        
+
         {developers.map((dev, index) => (
           <View
             key={index}
-            style={[styles.developerCard, { backgroundColor: theme.inputBackground }]}
+            style={[
+              styles.developerCard,
+              { backgroundColor: theme.inputBackground },
+            ]}
           >
             <View style={styles.developerHeader}>
               <Image
@@ -133,7 +150,7 @@ export default function AboutScreen() {
                 </Text>
               </View>
             </View>
-            
+
             <View style={styles.developerActions}>
               <TouchableOpacity
                 style={[styles.actionButton, { borderColor: theme.primary }]}
@@ -144,7 +161,7 @@ export default function AboutScreen() {
                   GitHub
                 </Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={[styles.actionButton, { borderColor: theme.primary }]}
                 onPress={() => openLink(`mailto:${dev.email}`)}
@@ -164,14 +181,17 @@ export default function AboutScreen() {
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
           Sobre o Projeto
         </Text>
-        
-        <View style={[styles.infoCard, { backgroundColor: theme.inputBackground }]}>
+
+        <View
+          style={[styles.infoCard, { backgroundColor: theme.inputBackground }]}
+        >
           <Text style={[styles.projectDescription, { color: theme.text }]}>
-            SentinelTrack é uma aplicação mobile desenvolvida como parte do Challenge FIAP 2025 - 2º Semestre. 
-            O app permite gerenciar motocicletas em pátios logísticos, com funcionalidades de cadastro, 
+            SentinelTrack é uma aplicação mobile desenvolvida como parte do
+            Challenge FIAP 2025 - 2º Semestre. O app permite gerenciar
+            motocicletas em pátios logísticos, com funcionalidades de cadastro,
             visualização em dashboard e geração de relatórios.
           </Text>
-          
+
           <View style={styles.techStack}>
             <Text style={[styles.techTitle, { color: theme.text }]}>
               Tecnologias Utilizadas:

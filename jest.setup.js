@@ -22,7 +22,9 @@ jest.mock('@react-native-clipboard/clipboard', () => ({
 jest.mock('expo-notifications', () => ({
   setNotificationHandler: jest.fn(),
   getPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
-  requestPermissionsAsync: jest.fn(() => Promise.resolve({ status: 'granted' })),
+  requestPermissionsAsync: jest.fn(() =>
+    Promise.resolve({ status: 'granted' })
+  ),
   getExpoPushTokenAsync: jest.fn(() => Promise.resolve({ data: 'mock-token' })),
   scheduleNotificationAsync: jest.fn(),
   addNotificationReceivedListener: jest.fn(),
@@ -58,7 +60,10 @@ jest.mock('./services/firebaseConfig', () => ({
 
 // Mock react-native-vector-icons
 jest.mock('react-native-vector-icons/Ionicons', () => 'Ionicons');
-jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => 'MaterialCommunityIcons');
+jest.mock(
+  'react-native-vector-icons/MaterialCommunityIcons',
+  () => 'MaterialCommunityIcons'
+);
 
 // Silence the warning: Animated: `useNativeDriver` is not supported
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');

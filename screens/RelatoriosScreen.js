@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,20 +8,20 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Print from "expo-print";
-import * as Sharing from "expo-sharing";
-import * as FileSystem from "expo-file-system";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { ThemeContext } from "../contexts/ThemeContext";
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { ThemeContext } from '../contexts/ThemeContext';
 
 export default function RelatoriosScreen() {
   const { theme } = useContext(ThemeContext);
 
-  const [setor, setSetor] = useState("A");
-  const [placa, setPlaca] = useState("");
-  const [data, setData] = useState("");
+  const [setor, setSetor] = useState('A');
+  const [placa, setPlaca] = useState('');
+  const [data, setData] = useState('');
   const [registros, setRegistros] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,23 +34,23 @@ export default function RelatoriosScreen() {
   const carregarRegistros = async () => {
     try {
       setLoading(true);
-      const dados = await AsyncStorage.getItem("motos");
+      const dados = await AsyncStorage.getItem('motos');
       const lista = dados ? JSON.parse(dados) : [];
 
-      const filtrados = lista.filter((item) => {
+      const filtrados = lista.filter(item => {
         const setorOK = setor
           ? item.vaga?.toUpperCase().startsWith(setor.toUpperCase())
           : true;
         const placaOK = placa
-          ? (item.placa || "").toLowerCase().includes(placa.toLowerCase())
+          ? (item.placa || '').toLowerCase().includes(placa.toLowerCase())
           : true;
-        const dataOK = data ? (item.dataHora || "").startsWith(data) : true;
+        const dataOK = data ? (item.dataHora || '').startsWith(data) : true;
         return setorOK && placaOK && dataOK;
       });
 
       setRegistros(filtrados);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar os dados.");
+      Alert.alert('Erro', 'Não foi possível carregar os dados.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -80,34 +80,34 @@ export default function RelatoriosScreen() {
         <body>
           <div class="title">📄 Relatório SentinelTrack</div>
           <div>
-            <span class="pill"><b>Setor:</b> ${setor || "Todos"}</span>
-            <span class="pill"><b>Placa:</b> ${placa || "Todas"}</span>
-            <span class="pill"><b>Data:</b> ${data || "Todas"}</span>
+            <span class="pill"><b>Setor:</b> ${setor || 'Todos'}</span>
+            <span class="pill"><b>Placa:</b> ${placa || 'Todas'}</span>
+            <span class="pill"><b>Data:</b> ${data || 'Todas'}</span>
             <span class="pill"><b>Registros:</b> ${registros.length}</span>
           </div>
           <hr />
           ${
             registros.length === 0
-              ? "<p>Nenhum resultado encontrado.</p>"
+              ? '<p>Nenhum resultado encontrado.</p>'
               : registros
                   .map(
-                    (item) => `
+                    item => `
                       <div class="card">
-                        <div class="badge">${item.tipo || "Entrada"}</div>
+                        <div class="badge">${item.tipo || 'Entrada'}</div>
                         <div class="row"><b>Placa:</b> ${
-                          item.placa || "Sem placa"
+                          item.placa || 'Sem placa'
                         }</div>
-                        <div class="row"><b>Vaga:</b> ${item.vaga || "-"}</div>
+                        <div class="row"><b>Vaga:</b> ${item.vaga || '-'}</div>
                         <div class="row"><b>Data/Hora:</b> ${
-                          item.dataHora || "-"
+                          item.dataHora || '-'
                         }</div>
                         <div class="row"><b>RM:</b> ${
-                          item.usuarioRM || "-"
+                          item.usuarioRM || '-'
                         }</div>
                       </div>
                     `
                   )
-                  .join("")
+                  .join('')
           }
         </body>
       </html>
@@ -118,22 +118,23 @@ export default function RelatoriosScreen() {
 
   const gerarCSV = async () => {
     const csvContent = registros.map(
-      (item) =>
-        `${item.tipo || "Entrada"},${item.placa || "Sem placa"},${
-          item.vaga || ""
-        },${item.dataHora || ""},${item.usuarioRM || ""}`
+      item =>
+        `${item.tipo || 'Entrada'},${item.placa || 'Sem placa'},${
+          item.vaga || ''
+        },${item.dataHora || ''},${item.usuarioRM || ''}`
     );
-    const csvFinal = ["Tipo,Placa,Vaga,DataHora,RM", ...csvContent].join("\n");
+    const csvFinal = ['Tipo,Placa,Vaga,DataHora,RM', ...csvContent].join('\n');
 
-    const fileUri = FileSystem.documentDirectory + "relatorio_SentinelTrack.csv";
+    const fileUri =
+      FileSystem.documentDirectory + 'relatorio_SentinelTrack.csv';
     await FileSystem.writeAsStringAsync(fileUri, csvFinal, {
       encoding: FileSystem.EncodingType.UTF8,
     });
 
     await Sharing.shareAsync(fileUri, {
-      mimeType: "text/csv",
-      dialogTitle: "Exportar Relatório CSV",
-      UTI: "public.comma-separated-values-text",
+      mimeType: 'text/csv',
+      dialogTitle: 'Exportar Relatório CSV',
+      UTI: 'public.comma-separated-values-text',
     });
   };
 
@@ -169,7 +170,7 @@ export default function RelatoriosScreen() {
         <Text
           style={[
             styles(theme).chipText,
-            ativo && { color: theme.background, fontWeight: "700" },
+            ativo && { color: theme.background, fontWeight: '700' },
           ]}
         >
           {label}
@@ -181,10 +182,10 @@ export default function RelatoriosScreen() {
   const LinhaFiltro = () => (
     <View style={styles(theme).filtros}>
       <View style={styles(theme).chipsRow}>
-        {["A", "B", "C", "D"].map((s) => (
+        {['A', 'B', 'C', 'D'].map(s => (
           <ChipSetor key={s} label={s} />
         ))}
-        <ChipSetor label={""} />
+        <ChipSetor label={''} />
         {/* vazio = todos */}
       </View>
 
@@ -199,7 +200,7 @@ export default function RelatoriosScreen() {
           <TextInput
             style={styles(theme).input}
             placeholder="Placa"
-            placeholderTextColor={theme.text + "90"}
+            placeholderTextColor={theme.text + '90'}
             value={placa}
             onChangeText={setPlaca}
             autoCapitalize="characters"
@@ -216,7 +217,7 @@ export default function RelatoriosScreen() {
           <TextInput
             style={styles(theme).input}
             placeholder="Data (AAAA-MM-DD)"
-            placeholderTextColor={theme.text + "90"}
+            placeholderTextColor={theme.text + '90'}
             value={data}
             onChangeText={setData}
           />
@@ -255,21 +256,21 @@ export default function RelatoriosScreen() {
   );
 
   const CardRegistro = ({ item }) => {
-    const tipo = item.tipo || "Entrada";
-    const isEntrada = (tipo || "").toLowerCase() === "entrada";
+    const tipo = item.tipo || 'Entrada';
+    const isEntrada = (tipo || '').toLowerCase() === 'entrada';
     return (
       <View style={styles(theme).card}>
         <View style={styles(theme).cardHeader}>
           <View style={styles(theme).badgeTipo(isEntrada)}>
             <Ionicons
-              name={isEntrada ? "log-in-outline" : "log-out-outline"}
+              name={isEntrada ? 'log-in-outline' : 'log-out-outline'}
               size={14}
-              color={isEntrada ? "#14532d" : "#7f1d1d"}
+              color={isEntrada ? '#14532d' : '#7f1d1d'}
             />
             <Text style={styles(theme).badgeTipoText(isEntrada)}>{tipo}</Text>
           </View>
           <Text style={styles(theme).cardPlaca}>
-            {item.placa || "Sem placa"}
+            {item.placa || 'Sem placa'}
           </Text>
         </View>
 
@@ -278,22 +279,22 @@ export default function RelatoriosScreen() {
         <View style={styles(theme).row}>
           <Ionicons name="location-outline" size={16} color={theme.text} />
           <Text style={styles(theme).rowText}>
-            Vaga:{" "}
-            <Text style={styles(theme).rowStrong}>{item.vaga || "-"}</Text>
+            Vaga:{' '}
+            <Text style={styles(theme).rowStrong}>{item.vaga || '-'}</Text>
           </Text>
         </View>
         <View style={styles(theme).row}>
           <Ionicons name="time-outline" size={16} color={theme.text} />
           <Text style={styles(theme).rowText}>
-            Data/Hora:{" "}
-            <Text style={styles(theme).rowStrong}>{item.dataHora || "-"}</Text>
+            Data/Hora:{' '}
+            <Text style={styles(theme).rowStrong}>{item.dataHora || '-'}</Text>
           </Text>
         </View>
         <View style={styles(theme).row}>
           <Ionicons name="person-circle-outline" size={16} color={theme.text} />
           <Text style={styles(theme).rowText}>
-            RM:{" "}
-            <Text style={styles(theme).rowStrong}>{item.usuarioRM || "-"}</Text>
+            RM:{' '}
+            <Text style={styles(theme).rowStrong}>{item.usuarioRM || '-'}</Text>
           </Text>
         </View>
       </View>
@@ -302,7 +303,7 @@ export default function RelatoriosScreen() {
 
   const EmptyState = () => (
     <View style={styles(theme).empty}>
-      <Ionicons name="search-outline" size={40} color={theme.text + "88"} />
+      <Ionicons name="search-outline" size={40} color={theme.text + '88'} />
       <Text style={styles(theme).emptyText}>Nenhum registro encontrado</Text>
       <Text style={styles(theme).emptySub}>
         Ajuste os filtros e tente novamente.
@@ -336,7 +337,7 @@ export default function RelatoriosScreen() {
 }
 
 /** ======= Styles (dependentes do theme) ======= */
-const styles = (theme) =>
+const styles = theme =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -347,29 +348,29 @@ const styles = (theme) =>
       marginBottom: 8,
     },
     titleRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
     titleLeft: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 8,
     },
     titulo: {
       fontSize: 24,
-      fontWeight: "800",
+      fontWeight: '800',
       color: theme.text,
       marginLeft: 8,
     },
     subtitulo: {
-      color: theme.text + "99",
+      color: theme.text + '99',
       marginTop: 6,
       marginLeft: 30,
     },
     badgeTotal: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 6,
       backgroundColor: theme.primary,
       paddingHorizontal: 10,
@@ -378,7 +379,7 @@ const styles = (theme) =>
     },
     badgeTotalText: {
       color: theme.background,
-      fontWeight: "800",
+      fontWeight: '800',
       fontSize: 12,
     },
 
@@ -389,8 +390,8 @@ const styles = (theme) =>
       marginVertical: 12,
     },
     chipsRow: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: 8,
       marginBottom: 10,
     },
@@ -400,28 +401,28 @@ const styles = (theme) =>
       borderRadius: 999,
       backgroundColor: theme.background,
       borderWidth: 1,
-      borderColor: theme.text + "22",
+      borderColor: theme.text + '22',
     },
     chipText: {
       color: theme.text,
-      fontWeight: "600",
+      fontWeight: '600',
       fontSize: 12,
       letterSpacing: 0.2,
     },
     inputRow: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: 10,
       marginBottom: 10,
     },
     inputWrap: {
       flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       backgroundColor: theme.background,
       borderRadius: 10,
       paddingHorizontal: 10,
       borderWidth: 1,
-      borderColor: theme.text + "22",
+      borderColor: theme.text + '22',
       height: 44,
     },
     input: {
@@ -430,9 +431,9 @@ const styles = (theme) =>
       height: 44,
     },
     botaoBuscar: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: theme.primary,
       paddingVertical: 12,
       borderRadius: 10,
@@ -440,7 +441,7 @@ const styles = (theme) =>
     },
     botaoBuscarText: {
       color: theme.background,
-      fontWeight: "800",
+      fontWeight: '800',
       letterSpacing: 0.3,
     },
 
@@ -450,43 +451,43 @@ const styles = (theme) =>
       padding: 14,
       marginBottom: 12,
       borderWidth: 1,
-      borderColor: theme.text + "10",
+      borderColor: theme.text + '10',
     },
     cardHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: 6,
     },
-    badgeTipo: (isEntrada) => ({
-      flexDirection: "row",
-      alignItems: "center",
+    badgeTipo: isEntrada => ({
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 6,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 999,
-      backgroundColor: isEntrada ? "#DCFCE7" : "#FEE2E2",
+      backgroundColor: isEntrada ? '#DCFCE7' : '#FEE2E2',
     }),
-    badgeTipoText: (isEntrada) => ({
-      color: isEntrada ? "#14532d" : "#7f1d1d",
-      fontWeight: "700",
+    badgeTipoText: isEntrada => ({
+      color: isEntrada ? '#14532d' : '#7f1d1d',
+      fontWeight: '700',
       fontSize: 12,
       letterSpacing: 0.2,
     }),
     cardPlaca: {
       color: theme.text,
-      fontWeight: "800",
+      fontWeight: '800',
       fontSize: 16,
       letterSpacing: 0.5,
     },
     divider: {
       height: StyleSheet.hairlineWidth,
-      backgroundColor: theme.text + "22",
+      backgroundColor: theme.text + '22',
       marginVertical: 8,
     },
     row: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 8,
       marginVertical: 2,
     },
@@ -494,36 +495,36 @@ const styles = (theme) =>
       color: theme.text,
     },
     rowStrong: {
-      fontWeight: "700",
+      fontWeight: '700',
     },
 
     empty: {
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
       paddingVertical: 40,
       gap: 8,
     },
     emptyText: {
       color: theme.text,
       fontSize: 16,
-      fontWeight: "700",
+      fontWeight: '700',
       marginTop: 6,
     },
     emptySub: {
-      color: theme.text + "99",
+      color: theme.text + '99',
       fontSize: 13,
     },
 
     exportRow: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: 10,
       marginTop: 6,
     },
     botaoExportar: {
       flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: theme.primary,
       paddingVertical: 12,
       borderRadius: 10,
@@ -531,7 +532,7 @@ const styles = (theme) =>
     },
     botaoExportarText: {
       color: theme.background,
-      fontWeight: "800",
+      fontWeight: '800',
       letterSpacing: 0.3,
     },
   });

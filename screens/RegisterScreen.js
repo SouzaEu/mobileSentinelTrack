@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -6,26 +6,26 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../services/firebaseConfig";
-import { useNavigation } from "@react-navigation/native";
-import { ThemeContext } from "../contexts/ThemeContext";
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../services/firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
+import { ThemeContext } from '../contexts/ThemeContext';
 
 export default function RegisterScreen({ onRegisterSuccess }) {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [confirmSenha, setConfirmSenha] = useState("");
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [confirmSenha, setConfirmSenha] = useState('');
   const navigation = useNavigation();
   const { theme } = useContext(ThemeContext);
 
   const handleRegister = async () => {
-    console.log("Botão pressionado!");
-    console.log("Tentando cadastro com:", email);
+    console.log('Botão pressionado!');
+    console.log('Tentando cadastro com:', email);
 
     if (senha !== confirmSenha) {
-      Alert.alert("Erro", "As senhas não coincidem.");
+      Alert.alert('Erro', 'As senhas não coincidem.');
       return;
     }
 
@@ -36,7 +36,7 @@ export default function RegisterScreen({ onRegisterSuccess }) {
         senha
       );
       const user = userCredential.user;
-      console.log("Cadastro bem-sucedido:", user.uid);
+      console.log('Cadastro bem-sucedido:', user.uid);
 
       onRegisterSuccess &&
         onRegisterSuccess({
@@ -44,12 +44,12 @@ export default function RegisterScreen({ onRegisterSuccess }) {
           email: user.email,
         });
     } catch (error) {
-      console.error("Erro no cadastro:", error);
-      Alert.alert("Erro", error?.message || "Não foi possível cadastrar.");
+      console.error('Erro no cadastro:', error);
+      Alert.alert('Erro', error?.message || 'Não foi possível cadastrar.');
     }
   };
 
-  const goToLogin = () => navigation.navigate("Login");
+  const goToLogin = () => navigation.navigate('Login');
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -143,25 +143,25 @@ export default function RegisterScreen({ onRegisterSuccess }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", paddingHorizontal: 30 },
+  container: { flex: 1, justifyContent: 'center', paddingHorizontal: 30 },
   backBtn: {
-    position: "absolute",
+    position: 'absolute',
     top: 50,
     left: 20,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 6,
   },
   backText: { marginLeft: 6, fontSize: 16 },
   logo: {
     fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     marginBottom: 40,
   },
   inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: 10,
     paddingHorizontal: 10,
     marginBottom: 15,
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 10,
     marginTop: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
-  buttonText: { textAlign: "center", fontWeight: "bold", fontSize: 16 },
+  buttonText: { textAlign: 'center', fontWeight: 'bold', fontSize: 16 },
 });

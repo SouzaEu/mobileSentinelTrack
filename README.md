@@ -5,11 +5,13 @@ SentinelTrack é uma aplicação mobile desenvolvida com React Native (Expo) par
 ## Funcionalidades
 
 ### Autenticação e Segurança
+
 - Login e cadastro com Firebase Authentication
 - Persistência de sessão com AsyncStorage
 - Logout seguro
 
 ### Gestão de Motocicletas
+
 - Cadastro completo de motos (placa, modelo, marca, cor, ano)
 - CRUD completo (Create, Read, Update, Delete)
 - Movimentação de motos entre setores
@@ -17,28 +19,33 @@ SentinelTrack é uma aplicação mobile desenvolvida com React Native (Expo) par
 - Integração completa com API .NET
 
 ### Dashboard e Visualização
+
 - Dashboard com visualização em matriz por setores
 - Estatísticas em tempo real
 - Indicadores de vagas ocupadas/disponíveis
 - Interface responsiva e intuitiva
 
 ### Relatórios e Exportação
+
 - Geração de relatórios filtrados por data, placa e setor
 - Exportação em PDF e CSV
 - Histórico de movimentações
 
 ### Notificações Push
+
 - Notificações para nova moto cadastrada
 - Alertas de moto removida
 - Lembretes de manutenção
 - Notificações de vagas disponíveis
 
 ### Internacionalização
+
 - Suporte completo para Português e Espanhol
 - Troca automática baseada no idioma do dispositivo
 - Interface totalmente traduzida
 
 ### Temas e Personalização
+
 - Modo claro e escuro
 - Troca automática baseada no sistema
 - Design seguindo Material Design Guidelines
@@ -46,15 +53,16 @@ SentinelTrack é uma aplicação mobile desenvolvida com React Native (Expo) par
 
 ## Participantes
 
-| Nome               | RM      | GitHub |
-|--------------------|---------|--------|
-| Thomaz Oliveira    | 555323  | thomaz-oliveira |
-| Vinicius Souza     | 556089  | SouzaEu |
-| Gabriel Duarte     | 556972  | gabriel-duarte |
+| Nome            | RM     | GitHub          |
+| --------------- | ------ | --------------- |
+| Thomaz Oliveira | 555323 | thomaz-oliveira |
+| Vinicius Souza  | 556089 | SouzaEu         |
+| Gabriel Duarte  | 556972 | gabriel-duarte  |
 
 ## Tecnologias Utilizadas
 
 ### Frontend Mobile
+
 - React Native + Expo SDK 53
 - React Navigation (Drawer + Stack)
 - AsyncStorage para persistência local
@@ -62,22 +70,26 @@ SentinelTrack é uma aplicação mobile desenvolvida com React Native (Expo) par
 - React Native Picker para seleções
 
 ### Autenticação e Backend
+
 - Firebase Authentication
 - API REST .NET integrada
 - Axios para requisições HTTP
 
 ### Notificações e Comunicação
+
 - Expo Notifications
 - Push Notifications locais e remotas
 - Firebase Cloud Messaging (FCM)
 
 ### Internacionalização e Temas
+
 - i18n-js para traduções
 - React Native Localize
 - Context API para gerenciamento de tema
 - Material Design Guidelines
 
 ### Ferramentas de Desenvolvimento
+
 - EAS Build para compilação
 - Firebase App Distribution
 - Git para versionamento
@@ -88,12 +100,14 @@ SentinelTrack é uma aplicação mobile desenvolvida com React Native (Expo) par
 O projeto possui um sistema completo de CI/CD com GitHub Actions:
 
 ### Workflows Implementados
+
 - **CI/CD Pipeline**: Lint, testes, build, segurança e análise de código
 - **Pull Request Checks**: Validações específicas para PRs
 - **Deploy Automático**: Build e distribuição via Firebase App Distribution
 - **Dependabot**: Atualizações automáticas de dependências
 
 ### Qualidade de Código
+
 - ESLint para análise estática
 - Prettier para formatação
 - Husky para git hooks
@@ -104,6 +118,7 @@ O projeto possui um sistema completo de CI/CD com GitHub Actions:
 
 - Node.js 18+ e npm instalados
 - Expo CLI instalado:
+
 ```bash
 npm install -g @expo/cli
 ```
@@ -122,6 +137,7 @@ npx expo start
 ```
 
 ### Scripts Disponíveis
+
 ```bash
 # Desenvolvimento
 npm start                 # Inicia o servidor Expo
@@ -185,6 +201,7 @@ SentinelTrack-app/
 ## Deploy e Publicação
 
 ### Firebase App Distribution
+
 O aplicativo está configurado para ser publicado via Firebase App Distribution:
 
 ```bash
@@ -202,6 +219,7 @@ eas build --platform android --profile preview
 ```
 
 ### Configurações de Deploy
+
 - Bundle ID: com.fiap.sentineltrack
 - App Name: SentinelTrack
 - Version: 1.0.0
@@ -210,6 +228,7 @@ eas build --platform android --profile preview
 ## Checklist de Entrega Final
 
 ### Implementação Funcional (30 pontos)
+
 - Todas as telas implementadas e funcionais
 - Navegação integrada e fluida
 - Tratamento completo de formulários com validações
@@ -217,34 +236,40 @@ eas build --platform android --profile preview
 - Todos os botões e interações operacionais
 
 ### Publicação do App (10 pontos)
+
 - Configurado para Firebase App Distribution
 - Tela "Sobre o App" com hash do commit
 - EAS Build configurado
 
 ### Notificações Push (10 pontos)
+
 - Notificações para nova moto cadastrada
 - Notificações para moto removida
 - Notificações de vagas disponíveis
 - Sistema testável e demonstrável
 
 ### Integração com API (10 pontos)
+
 - CRUD completo de motocicletas
 - CRUD de setores e movimentações
 - Tratamento de erros e validações
 - Indicadores de carregamento
 
 ### Localização e Internacionalização (10 pontos)
+
 - Suporte para Português e Espanhol
 - Todas as strings traduzidas
 - Troca automática de idioma
 
 ### Estilização com Tema (10 pontos)
+
 - Modo claro e escuro
 - Personalização visual consistente
 - Material Design Guidelines
 - Identidade visual coerente
 
 ### Arquitetura de Código (10 pontos)
+
 - Organização lógica de arquivos e pastas
 - Nomeação clara e padronizada
 - Separação adequada de responsabilidades
@@ -252,6 +277,7 @@ eas build --platform android --profile preview
 - Boas práticas do React Native
 
 ### Documentação (10 pontos)
+
 - README.md completo e atualizado
 - Estrutura de pastas documentada
 - Informações dos desenvolvedores

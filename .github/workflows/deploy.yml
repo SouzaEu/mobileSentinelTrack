@@ -22,7 +22,7 @@ jobs:
   deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -110,17 +110,17 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             ## Changes in this Release
-            
+
             - Built from commit: ${{ github.sha }}
             - Build profile: ${{ steps.build-profile.outputs.profile }}
             - APK available in Firebase App Distribution
-            
+
             ### Installation
-            
+
             1. Download from Firebase App Distribution
             2. Install the APK on your Android device
             3. Follow the setup instructions in the app
-            
+
           draft: false
           prerelease: false
 
@@ -141,7 +141,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     if: always()
-    
+
     steps:
       - name: Deployment notification
         run: |

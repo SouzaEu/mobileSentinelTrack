@@ -10,7 +10,7 @@ jobs:
   pr-info:
     name: PR Information
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: PR Details
         run: |
@@ -27,12 +27,12 @@ jobs:
   pr-title-check:
     name: Validate PR Title
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Check PR title format
         run: |
           title="${{ github.event.pull_request.title }}"
-          
+
           # Check if title follows conventional commit format
           if [[ $title =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .+ ]]; then
             echo "✅ PR title follows conventional commit format"
@@ -49,7 +49,7 @@ jobs:
   breaking-changes:
     name: Check Breaking Changes
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -61,7 +61,7 @@ jobs:
           # Check if PR title or description mentions breaking changes
           title="${{ github.event.pull_request.title }}"
           body="${{ github.event.pull_request.body }}"
-          
+
           if [[ $title =~ "BREAKING CHANGE" ]] || [[ $body =~ "BREAKING CHANGE" ]]; then
             echo "⚠️ This PR contains breaking changes"
             echo "Please ensure:"
@@ -76,7 +76,7 @@ jobs:
   file-changes:
     name: Analyze File Changes
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -86,37 +86,37 @@ jobs:
       - name: Analyze changed files
         run: |
           echo "## Changed Files Analysis" >> $GITHUB_STEP_SUMMARY
-          
+
           # Get list of changed files
           git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} > changed_files.txt
-          
+
           # Categorize changes
           config_files=$(grep -E '\.(json|js|yml|yaml)$' changed_files.txt | grep -E '(package\.json|app\.json|eas\.json|\.eslintrc|\.prettierrc|commitlint\.config\.js)' || true)
           source_files=$(grep -E '\.(js|jsx|ts|tsx)$' changed_files.txt | grep -v -E '(test|spec)' || true)
           test_files=$(grep -E '\.(test|spec)\.(js|jsx|ts|tsx)$' changed_files.txt || true)
           doc_files=$(grep -E '\.(md|txt)$' changed_files.txt || true)
-          
+
           if [ ! -z "$config_files" ]; then
             echo "### 🔧 Configuration Files" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "$config_files" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ ! -z "$source_files" ]; then
             echo "### 📝 Source Files" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "$source_files" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ ! -z "$test_files" ]; then
             echo "### 🧪 Test Files" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "$test_files" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ ! -z "$doc_files" ]; then
             echo "### 📚 Documentation" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
@@ -128,7 +128,7 @@ jobs:
   todo-check:
     name: Check for TODO/FIXME
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -136,9 +136,9 @@ jobs:
       - name: Check for TODO/FIXME comments
         run: |
           echo "Checking for TODO/FIXME comments..."
-          
+
           todos=$(grep -r -n -E "(TODO|FIXME|XXX|HACK)" --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" . || true)
-          
+
           if [ ! -z "$todos" ]; then
             echo "⚠️ Found TODO/FIXME comments:"
             echo "$todos"
@@ -155,21 +155,21 @@ jobs:
   pr-size:
     name: Check PR Size
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Evaluate PR size
         run: |
           files_changed=${{ github.event.pull_request.changed_files }}
           additions=${{ github.event.pull_request.additions }}
           deletions=${{ github.event.pull_request.deletions }}
-          
+
           echo "## PR Size Analysis" >> $GITHUB_STEP_SUMMARY
           echo "- Files changed: $files_changed" >> $GITHUB_STEP_SUMMARY
           echo "- Lines added: $additions" >> $GITHUB_STEP_SUMMARY
           echo "- Lines deleted: $deletions" >> $GITHUB_STEP_SUMMARY
-          
+
           total_changes=$((additions + deletions))
-          
+
           if [ $files_changed -gt 20 ] || [ $total_changes -gt 500 ]; then
             echo "### ⚠️ Large PR Warning" >> $GITHUB_STEP_SUMMARY
             echo "This PR is quite large. Consider:" >> $GITHUB_STEP_SUMMARY
@@ -188,7 +188,7 @@ jobs:
   dependency-check:
     name: Check Dependency Changes
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

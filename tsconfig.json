@@ -17,18 +17,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    ".expo",
-    "android",
-    "ios",
-    "dist",
-    "build"
-  ]
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", ".expo", "android", "ios", "dist", "build"]
 }

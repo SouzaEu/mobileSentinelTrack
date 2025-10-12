@@ -28,12 +28,15 @@ import { listSectors } from '../services/api/sectors';
 
 // Services
 import { sendMotorcycleNotification } from '../services/notificationService';
-import { validateBrazilianLicensePlate, validateYear } from '../services/api/validators';
+import {
+  validateBrazilianLicensePlate,
+  validateYear,
+} from '../services/api/validators';
 import i18n from '../services/i18n';
 
 export default function MotorcycleManagementScreen() {
   const { theme } = useContext(ThemeContext);
-  
+
   // State
   const [motorcycles, setMotorcycles] = useState([]);
   const [sectors, setSectors] = useState([]);
@@ -41,7 +44,7 @@ export default function MotorcycleManagementScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingMotorcycle, setEditingMotorcycle] = useState(null);
-  
+
   // Form state
   const [formData, setFormData] = useState({
     licensePlate: '',
@@ -119,18 +122,20 @@ export default function MotorcycleManagementScreen() {
 
   const validateForm = () => {
     // Validar placa
-    const plateValidation = validateBrazilianLicensePlate(formData.licensePlate);
+    const plateValidation = validateBrazilianLicensePlate(
+      formData.licensePlate
+    );
     if (!plateValidation.isValid) {
       Alert.alert(i18n.t('common.error'), plateValidation.message);
       return false;
     }
-    
+
     // Validar modelo
     if (!formData.model.trim()) {
       Alert.alert(i18n.t('common.error'), i18n.t('motorcycles.modelRequired'));
       return false;
     }
-    
+
     // Validar ano
     if (formData.year) {
       const yearValidation = validateYear(formData.year);
@@ -139,13 +144,13 @@ export default function MotorcycleManagementScreen() {
         return false;
       }
     }
-    
+
     // Validar setor
     if (!formData.sectorId) {
       Alert.alert(i18n.t('common.error'), 'Setor é obrigatório');
       return false;
     }
-    
+
     return true;
   };
 
@@ -154,11 +159,14 @@ export default function MotorcycleManagementScreen() {
 
     try {
       setLoading(true);
-      
+
       if (editingMotorcycle) {
         // Update existing motorcycle
         await updateMotorcycle(editingMotorcycle.motorcycleId, formData);
-        Alert.alert(i18n.t('common.success'), i18n.t('motorcycles.motorcycleUpdated'));
+        Alert.alert(
+          i18n.t('common.success'),
+          i18n.t('motorcycles.motorcycleUpdated')
+        );
       } else {
         // Create new motorcycle
         const motorcycleId = uuid.v4();
@@ -166,7 +174,7 @@ export default function MotorcycleManagementScreen() {
           motorcycleId,
           ...formData,
         });
-        
+
         // Send notification
         const sector = sectors.find(s => s.id === formData.sectorId);
         sendMotorcycleNotification.newMotorcycle(
@@ -174,21 +182,27 @@ export default function MotorcycleManagementScreen() {
           sector?.name || 'Setor',
           'Nova vaga'
         );
-        
-        Alert.alert(i18n.t('common.success'), i18n.t('motorcycles.motorcycleAdded'));
+
+        Alert.alert(
+          i18n.t('common.success'),
+          i18n.t('motorcycles.motorcycleAdded')
+        );
       }
-      
+
       closeModal();
       await loadData();
     } catch (error) {
       console.error('Error saving motorcycle:', error);
-      Alert.alert(i18n.t('common.error'), error.message || 'Erro ao salvar moto');
+      Alert.alert(
+        i18n.t('common.error'),
+        error.message || 'Erro ao salvar moto'
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = (motorcycle) => {
+  const handleDelete = motorcycle => {
     Alert.alert(
       'Confirmar Exclusão',
       `Deseja realmente excluir a moto ${motorcycle.licensePlate}?`,
@@ -201,7 +215,7 @@ export default function MotorcycleManagementScreen() {
             try {
               setLoading(true);
               await deleteMotorcycle(motorcycle.motorcycleId);
-              
+
               // Send notification
               const sector = sectors.find(s => s.id === motorcycle.sectorId);
               sendMotorcycleNotification.motorcycleRemoved(
@@ -209,8 +223,11 @@ export default function MotorcycleManagementScreen() {
                 sector?.name || 'Setor',
                 'Vaga liberada'
               );
-              
-              Alert.alert(i18n.t('common.success'), i18n.t('motorcycles.motorcycleDeleted'));
+
+              Alert.alert(
+                i18n.t('common.success'),
+                i18n.t('motorcycles.motorcycleDeleted')
+              );
               await loadData();
             } catch (error) {
               console.error('Error deleting motorcycle:', error);
@@ -224,9 +241,9 @@ export default function MotorcycleManagementScreen() {
     );
   };
 
-  const handleMove = (motorcycle) => {
+  const handleMove = motorcycle => {
     const availableSectors = sectors.filter(s => s.id !== motorcycle.sectorId);
-    
+
     if (availableSectors.length === 0) {
       Alert.alert('Aviso', 'Não há outros setores disponíveis');
       return;
@@ -235,36 +252,43 @@ export default function MotorcycleManagementScreen() {
     Alert.alert(
       'Mover Moto',
       'Selecione o novo setor:',
-      availableSectors.map(sector => ({
-        text: sector.name,
-        onPress: async () => {
-          try {
-            setLoading(true);
-            await moveMotorcycle(motorcycle.motorcycleId, sector.id);
-            
-            sendMotorcycleNotification.spotAvailable(
-              sector.name,
-              'Nova localização'
-            );
-            
-            Alert.alert(i18n.t('common.success'), 'Moto movida com sucesso!');
-            await loadData();
-          } catch (error) {
-            console.error('Error moving motorcycle:', error);
-            Alert.alert(i18n.t('common.error'), 'Erro ao mover moto');
-          } finally {
-            setLoading(false);
-          }
-        },
-      })).concat([{ text: i18n.t('common.cancel'), style: 'cancel' }])
+      availableSectors
+        .map(sector => ({
+          text: sector.name,
+          onPress: async () => {
+            try {
+              setLoading(true);
+              await moveMotorcycle(motorcycle.motorcycleId, sector.id);
+
+              sendMotorcycleNotification.spotAvailable(
+                sector.name,
+                'Nova localização'
+              );
+
+              Alert.alert(i18n.t('common.success'), 'Moto movida com sucesso!');
+              await loadData();
+            } catch (error) {
+              console.error('Error moving motorcycle:', error);
+              Alert.alert(i18n.t('common.error'), 'Erro ao mover moto');
+            } finally {
+              setLoading(false);
+            }
+          },
+        }))
+        .concat([{ text: i18n.t('common.cancel'), style: 'cancel' }])
     );
   };
 
   const renderMotorcycle = ({ item }) => {
     const sector = sectors.find(s => s.id === item.sectorId);
-    
+
     return (
-      <View style={[styles.motorcycleCard, { backgroundColor: theme.inputBackground }]}>
+      <View
+        style={[
+          styles.motorcycleCard,
+          { backgroundColor: theme.inputBackground },
+        ]}
+      >
         <View style={styles.motorcycleHeader}>
           <View style={styles.motorcycleInfo}>
             <Text style={[styles.licensePlate, { color: theme.text }]}>
@@ -304,7 +328,13 @@ export default function MotorcycleManagementScreen() {
 
   if (loading && !refreshing) {
     return (
-      <View style={[styles.container, styles.centered, { backgroundColor: theme.background }]}>
+      <View
+        style={[
+          styles.container,
+          styles.centered,
+          { backgroundColor: theme.background },
+        ]}
+      >
         <ActivityIndicator size="large" color={theme.primary} />
         <Text style={[styles.loadingText, { color: theme.text }]}>
           {i18n.t('common.loading')}
@@ -332,7 +362,7 @@ export default function MotorcycleManagementScreen() {
       <FlatList
         data={motorcycles}
         renderItem={renderMotorcycle}
-        keyExtractor={(item) => item.motorcycleId || item.id}
+        keyExtractor={item => item.motorcycleId || item.id}
         contentContainerStyle={styles.listContainer}
         refreshControl={
           <RefreshControl
@@ -365,10 +395,19 @@ export default function MotorcycleManagementScreen() {
         onRequestClose={closeModal}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: theme.background }]}>
-            <View style={[styles.modalHeader, { borderBottomColor: theme.inputBackground }]}>
+          <View
+            style={[styles.modalContent, { backgroundColor: theme.background }]}
+          >
+            <View
+              style={[
+                styles.modalHeader,
+                { borderBottomColor: theme.inputBackground },
+              ]}
+            >
               <Text style={[styles.modalTitle, { color: theme.text }]}>
-                {editingMotorcycle ? i18n.t('motorcycles.editMotorcycle') : i18n.t('motorcycles.addMotorcycle')}
+                {editingMotorcycle
+                  ? i18n.t('motorcycles.editMotorcycle')
+                  : i18n.t('motorcycles.addMotorcycle')}
               </Text>
               <TouchableOpacity onPress={closeModal}>
                 <Ionicons name="close" size={24} color={theme.text} />
@@ -377,56 +416,83 @@ export default function MotorcycleManagementScreen() {
 
             <View style={styles.formContainer}>
               <TextInput
-                style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
+                style={[
+                  styles.input,
+                  { backgroundColor: theme.inputBackground, color: theme.text },
+                ]}
                 placeholder={i18n.t('motorcycles.licensePlate')}
                 placeholderTextColor={theme.text + '80'}
                 value={formData.licensePlate}
-                onChangeText={(text) => setFormData({ ...formData, licensePlate: text })}
+                onChangeText={text =>
+                  setFormData({ ...formData, licensePlate: text })
+                }
                 autoCapitalize="characters"
               />
 
               <TextInput
-                style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
+                style={[
+                  styles.input,
+                  { backgroundColor: theme.inputBackground, color: theme.text },
+                ]}
                 placeholder={i18n.t('motorcycles.brand')}
                 placeholderTextColor={theme.text + '80'}
                 value={formData.brand}
-                onChangeText={(text) => setFormData({ ...formData, brand: text })}
+                onChangeText={text => setFormData({ ...formData, brand: text })}
               />
 
               <TextInput
-                style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
+                style={[
+                  styles.input,
+                  { backgroundColor: theme.inputBackground, color: theme.text },
+                ]}
                 placeholder={i18n.t('motorcycles.model')}
                 placeholderTextColor={theme.text + '80'}
                 value={formData.model}
-                onChangeText={(text) => setFormData({ ...formData, model: text })}
+                onChangeText={text => setFormData({ ...formData, model: text })}
               />
 
               <TextInput
-                style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
+                style={[
+                  styles.input,
+                  { backgroundColor: theme.inputBackground, color: theme.text },
+                ]}
                 placeholder={i18n.t('motorcycles.color')}
                 placeholderTextColor={theme.text + '80'}
                 value={formData.color}
-                onChangeText={(text) => setFormData({ ...formData, color: text })}
+                onChangeText={text => setFormData({ ...formData, color: text })}
               />
 
               <TextInput
-                style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
+                style={[
+                  styles.input,
+                  { backgroundColor: theme.inputBackground, color: theme.text },
+                ]}
                 placeholder={i18n.t('motorcycles.year')}
                 placeholderTextColor={theme.text + '80'}
                 value={formData.year}
-                onChangeText={(text) => setFormData({ ...formData, year: text })}
+                onChangeText={text => setFormData({ ...formData, year: text })}
                 keyboardType="numeric"
               />
 
-              <View style={[styles.pickerContainer, { backgroundColor: theme.inputBackground }]}>
+              <View
+                style={[
+                  styles.pickerContainer,
+                  { backgroundColor: theme.inputBackground },
+                ]}
+              >
                 <Picker
                   selectedValue={formData.sectorId}
-                  onValueChange={(value) => setFormData({ ...formData, sectorId: value })}
+                  onValueChange={value =>
+                    setFormData({ ...formData, sectorId: value })
+                  }
                   style={{ color: theme.text }}
                   dropdownIconColor={theme.text}
                 >
-                  <Picker.Item label={i18n.t('motorcycles.selectSector')} value="" />
-                  {sectors.map((sector) => (
+                  <Picker.Item
+                    label={i18n.t('motorcycles.selectSector')}
+                    value=""
+                  />
+                  {sectors.map(sector => (
                     <Picker.Item
                       key={sector.id}
                       label={sector.name}
@@ -442,13 +508,21 @@ export default function MotorcycleManagementScreen() {
                 style={[styles.modalButton, styles.cancelButton]}
                 onPress={closeModal}
               >
-                <Text style={styles.cancelButtonText}>{i18n.t('common.cancel')}</Text>
+                <Text style={styles.cancelButtonText}>
+                  {i18n.t('common.cancel')}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, styles.saveButton, { backgroundColor: theme.primary }]}
+                style={[
+                  styles.modalButton,
+                  styles.saveButton,
+                  { backgroundColor: theme.primary },
+                ]}
                 onPress={handleSave}
               >
-                <Text style={styles.saveButtonText}>{i18n.t('common.save')}</Text>
+                <Text style={styles.saveButtonText}>
+                  {i18n.t('common.save')}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

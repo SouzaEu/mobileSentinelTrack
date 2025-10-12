@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useContext } from "react";
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,27 +8,27 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-} from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { ThemeContext } from "../contexts/ThemeContext";
-import uuid from "react-native-uuid";
+} from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { ThemeContext } from '../contexts/ThemeContext';
+import uuid from 'react-native-uuid';
 
 // === IMPORTES DA API (.NET) ===
-import { listSectors } from "../services/api/sectors";
-import { listMotorcycles, createMotorcycle } from "../services/api/motorcycles";
-import { createMovement } from "../services/api/movements";
+import { listSectors } from '../services/api/sectors';
+import { listMotorcycles, createMotorcycle } from '../services/api/motorcycles';
+import { createMovement } from '../services/api/movements';
 
 // === IMPORTES DE NOTIFICAÇÕES E I18N ===
-import { sendMotorcycleNotification } from "../services/notificationService";
-import { validateBrazilianLicensePlate } from "../services/api/validators";
-import i18n from "../services/i18n";
+import { sendMotorcycleNotification } from '../services/notificationService';
+import { validateBrazilianLicensePlate } from '../services/api/validators';
+import i18n from '../services/i18n';
 
 export default function CadastroMotoScreen({ userRM }) {
   const { theme } = useContext(ThemeContext);
 
   // estado de UI
-  const [setor, setSetor] = useState("A"); // A | B | C | D (prefixo)
-  const [placa, setPlaca] = useState("");
+  const [setor, setSetor] = useState('A'); // A | B | C | D (prefixo)
+  const [placa, setPlaca] = useState('');
   const [vagaSelecionada, setVagaSelecionada] = useState(null); // guarda o CODE
   const [loading, setLoading] = useState(false);
 
@@ -56,8 +56,8 @@ export default function CadastroMotoScreen({ userRM }) {
   // agrupa visualmente: vagas do setor atual
   const vagasDoSetor = useMemo(() => {
     return sectors
-      .map((s) => s.code)
-      .filter((code) => typeof code === "string" && code.startsWith(setor))
+      .map(s => s.code)
+      .filter(code => typeof code === 'string' && code.startsWith(setor))
       .sort((a, b) => {
         const na = parseInt(a.slice(1), 10);
         const nb = parseInt(b.slice(1), 10);
@@ -87,7 +87,7 @@ export default function CadastroMotoScreen({ userRM }) {
       setSectors(Array.isArray(secs) ? secs : []);
       setMotorcycles(Array.isArray(motos) ? motos : []);
     } catch (e) {
-      Alert.alert("Erro", e?.message || "Falha ao carregar dados do servidor.");
+      Alert.alert('Erro', e?.message || 'Falha ao carregar dados do servidor.');
     } finally {
       setLoading(false);
     }
@@ -106,30 +106,30 @@ export default function CadastroMotoScreen({ userRM }) {
     // Validar placa
     const plateValidation = validateBrazilianLicensePlate(placa);
     if (!plateValidation.isValid) {
-      Alert.alert("Erro", plateValidation.message);
+      Alert.alert('Erro', plateValidation.message);
       return;
     }
-    
+
     if (!vagaSelecionada) {
-      Alert.alert("Ops", "Selecione uma vaga livre antes de cadastrar.");
+      Alert.alert('Ops', 'Selecione uma vaga livre antes de cadastrar.');
       return;
     }
     if (ocupadas.has(vagaSelecionada)) {
-      Alert.alert("Ops", "Essa vaga está ocupada. Escolha outra vaga.");
+      Alert.alert('Ops', 'Essa vaga está ocupada. Escolha outra vaga.');
       return;
     }
 
     // pega o setor escolhido pelo CODE (ex: "A3") -> id (Guid) para enviar à API
     const sector = sectorByCode.get(vagaSelecionada);
     if (!sector) {
-      Alert.alert("Erro", "Setor selecionado não encontrado.");
+      Alert.alert('Erro', 'Setor selecionado não encontrado.');
       return;
     }
 
     // AJUSTE: se seu ID do setor vier como sector.sectorId, troque abaixo
     const sectorId = sector.id || sector.sectorId;
     if (!sectorId) {
-      Alert.alert("Erro", "Setor sem ID válido.");
+      Alert.alert('Erro', 'Setor sem ID válido.');
       return;
     }
 
@@ -139,10 +139,10 @@ export default function CadastroMotoScreen({ userRM }) {
     setLoading(true);
     try {
       // cria a moto já alocada no setor escolhido
-      await createMotorcycle({ 
-        motorcycleId, 
-        sectorId, 
-        licensePlate: plateValidation.formattedPlate 
+      await createMotorcycle({
+        motorcycleId,
+        sectorId,
+        licensePlate: plateValidation.formattedPlate,
       });
 
       try {
@@ -151,15 +151,15 @@ export default function CadastroMotoScreen({ userRM }) {
 
       // refresh
       await loadAll();
-      
+
       // Enviar notificação
       sendMotorcycleNotification.newMotorcycle(
         placa,
         `Setor ${setor}`,
         vagaSelecionada
       );
-      
-      setPlaca("");
+
+      setPlaca('');
       setVagaSelecionada(null);
 
       Alert.alert(
@@ -168,8 +168,8 @@ export default function CadastroMotoScreen({ userRM }) {
       );
     } catch (e) {
       Alert.alert(
-        "Erro ao cadastrar",
-        e?.message || "Falha ao enviar para o servidor."
+        'Erro ao cadastrar',
+        e?.message || 'Falha ao enviar para o servidor.'
       );
     } finally {
       setLoading(false);
@@ -177,7 +177,7 @@ export default function CadastroMotoScreen({ userRM }) {
   }
 
   const limpar = () => {
-    setPlaca("");
+    setPlaca('');
     setVagaSelecionada(null);
   };
 
@@ -219,10 +219,10 @@ export default function CadastroMotoScreen({ userRM }) {
         <Text
           style={[
             styles(theme).chipText,
-            ativo && { color: theme.background, fontWeight: "800" },
+            ativo && { color: theme.background, fontWeight: '800' },
           ]}
         >
-          {label || "Todos"}
+          {label || 'Todos'}
         </Text>
       </TouchableOpacity>
     );
@@ -230,7 +230,7 @@ export default function CadastroMotoScreen({ userRM }) {
 
   const LinhaSetor = () => (
     <View style={styles(theme).chipsRow}>
-      {["A", "B", "C", "D"].map((s) => (
+      {['A', 'B', 'C', 'D'].map(s => (
         <ChipSetor key={s} label={s} />
       ))}
     </View>
@@ -257,8 +257,8 @@ export default function CadastroMotoScreen({ userRM }) {
           style={[
             styles(theme).vagaText,
             isOcupada && {
-              color: theme.text + "55",
-              textDecorationLine: "line-through",
+              color: theme.text + '55',
+              textDecorationLine: 'line-through',
             },
           ]}
         >
@@ -266,12 +266,12 @@ export default function CadastroMotoScreen({ userRM }) {
         </Text>
         <View style={styles(theme).vagaBadge(isOcupada)}>
           <Ionicons
-            name={isOcupada ? "close-circle" : "checkmark-circle"}
+            name={isOcupada ? 'close-circle' : 'checkmark-circle'}
             size={14}
-            color={isOcupada ? "#7f1d1d" : "#14532d"}
+            color={isOcupada ? '#7f1d1d' : '#14532d'}
           />
           <Text style={styles(theme).vagaBadgeText(isOcupada)}>
-            {isOcupada ? "Ocupada" : "Livre"}
+            {isOcupada ? 'Ocupada' : 'Livre'}
           </Text>
         </View>
       </TouchableOpacity>
@@ -280,7 +280,7 @@ export default function CadastroMotoScreen({ userRM }) {
 
   if (loading && sectors.length === 0) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" />
         <Text style={{ marginTop: 8, color: theme.text }}>Carregando...</Text>
       </View>
@@ -306,10 +306,10 @@ export default function CadastroMotoScreen({ userRM }) {
           />
           <TextInput
             value={placa}
-            onChangeText={(t) => setPlaca((t || "").toUpperCase())}
+            onChangeText={t => setPlaca((t || '').toUpperCase())}
             placeholder="Digite a placa (opcional)"
             style={styles(theme).input}
-            placeholderTextColor={theme.text + "80"}
+            placeholderTextColor={theme.text + '80'}
             autoCapitalize="characters"
           />
         </View>
@@ -317,14 +317,14 @@ export default function CadastroMotoScreen({ userRM }) {
         <Text style={styles(theme).label}>Vagas do setor {setor}</Text>
         <FlatList
           data={vagasDoSetor}
-          keyExtractor={(item) => item}
+          keyExtractor={item => item}
           numColumns={3}
           columnWrapperStyle={{ gap: 10 }}
           contentContainerStyle={{ paddingVertical: 6 }}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           renderItem={({ item }) => <VagaItem vaga={item} />}
           ListEmptyComponent={
-            <Text style={{ color: theme.text + "99", marginTop: 8 }}>
+            <Text style={{ color: theme.text + '99', marginTop: 8 }}>
               Nenhuma vaga cadastrada no setor {setor}.
             </Text>
           }
@@ -347,7 +347,7 @@ export default function CadastroMotoScreen({ userRM }) {
           >
             <Ionicons name="save-outline" size={18} color={theme.background} />
             <Text style={styles(theme).btnPrimaryText}>
-              {loading ? "Salvando..." : "Cadastrar"}
+              {loading ? 'Salvando...' : 'Cadastrar'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -357,7 +357,7 @@ export default function CadastroMotoScreen({ userRM }) {
 }
 
 /** ======= Styles (dependentes do theme) ======= */
-const styles = (theme) =>
+const styles = theme =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -366,29 +366,29 @@ const styles = (theme) =>
     },
     headerWrap: { marginBottom: 8 },
     titleRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
     titleLeft: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 8,
     },
     titulo: {
       fontSize: 22,
-      fontWeight: "800",
+      fontWeight: '800',
       color: theme.text,
       marginLeft: 8,
     },
     subtitulo: {
-      color: theme.text + "99",
+      color: theme.text + '99',
       marginTop: 6,
       marginLeft: 32,
     },
     smallPill: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 6,
       backgroundColor: theme.primary,
       paddingHorizontal: 10,
@@ -397,7 +397,7 @@ const styles = (theme) =>
     },
     smallPillText: {
       color: theme.background,
-      fontWeight: "800",
+      fontWeight: '800',
       fontSize: 12,
     },
 
@@ -406,18 +406,18 @@ const styles = (theme) =>
       borderRadius: 16,
       padding: 14,
       borderWidth: 1,
-      borderColor: theme.text + "10",
+      borderColor: theme.text + '10',
       marginTop: 10,
     },
     label: {
       color: theme.text,
-      fontWeight: "700",
+      fontWeight: '700',
       marginTop: 8,
       marginBottom: 6,
     },
     chipsRow: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: 8,
       marginBottom: 6,
     },
@@ -427,23 +427,23 @@ const styles = (theme) =>
       borderRadius: 999,
       backgroundColor: theme.background,
       borderWidth: 1,
-      borderColor: theme.text + "22",
+      borderColor: theme.text + '22',
     },
     chipText: {
       color: theme.text,
-      fontWeight: "600",
+      fontWeight: '600',
       fontSize: 12,
       letterSpacing: 0.2,
     },
 
     inputWrap: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       backgroundColor: theme.background,
       borderRadius: 10,
       paddingHorizontal: 10,
       borderWidth: 1,
-      borderColor: theme.text + "22",
+      borderColor: theme.text + '22',
       height: 44,
     },
     input: { flex: 1, color: theme.text, height: 44 },
@@ -453,39 +453,39 @@ const styles = (theme) =>
       minWidth: 90,
       paddingVertical: 12,
       borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: theme.background,
       borderWidth: 1,
-      borderColor: theme.text + "22",
+      borderColor: theme.text + '22',
     },
     vagaOcupada: { backgroundColor: theme.background, opacity: 0.7 },
-    vagaText: { color: theme.text, fontWeight: "700", marginBottom: 6 },
-    vagaBadge: (isOcupada) => ({
-      flexDirection: "row",
-      alignItems: "center",
+    vagaText: { color: theme.text, fontWeight: '700', marginBottom: 6 },
+    vagaBadge: isOcupada => ({
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 6,
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 999,
-      backgroundColor: isOcupada ? "#FEE2E2" : "#DCFCE7",
+      backgroundColor: isOcupada ? '#FEE2E2' : '#DCFCE7',
     }),
-    vagaBadgeText: (isOcupada) => ({
-      color: isOcupada ? "#7f1d1d" : "#14532d",
-      fontWeight: "700",
+    vagaBadgeText: isOcupada => ({
+      color: isOcupada ? '#7f1d1d' : '#14532d',
+      fontWeight: '700',
       fontSize: 12,
     }),
 
     actionsRow: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: 10,
       marginTop: 12,
     },
     btnPrimary: {
       flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: theme.primary,
       paddingVertical: 12,
       borderRadius: 10,
@@ -493,23 +493,23 @@ const styles = (theme) =>
     },
     btnPrimaryText: {
       color: theme.background,
-      fontWeight: "800",
+      fontWeight: '800',
       letterSpacing: 0.3,
     },
     btnOutlined: {
       flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
       paddingVertical: 12,
       borderRadius: 10,
       gap: 8,
       borderWidth: 1,
-      borderColor: theme.text + "22",
+      borderColor: theme.text + '22',
       backgroundColor: theme.background,
     },
     btnOutlinedText: {
       color: theme.text,
-      fontWeight: "700",
+      fontWeight: '700',
     },
   });

@@ -1,30 +1,35 @@
 // App.js
-import React, { useEffect, useState, useContext, useRef } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { createStackNavigator } from "@react-navigation/stack";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { signOut } from "firebase/auth";
-import { auth } from "./screens/../services/firebaseConfig";
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import DashboardScreen from "./screens/DashboardScreen";
-import CadastroMotoScreen from "./screens/CadastroMotoScreen";
-import RelatoriosScreen from "./screens/RelatoriosScreen";
-import AboutScreen from "./screens/AboutScreen";
-import MotorcycleManagementScreen from "./screens/MotorcycleManagementScreen";
+import React, { useEffect, useState, useContext, useRef } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { signOut } from 'firebase/auth';
+import { auth } from './screens/../services/firebaseConfig';
+import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import DashboardScreen from './screens/DashboardScreen';
+import CadastroMotoScreen from './screens/CadastroMotoScreen';
+import RelatoriosScreen from './screens/RelatoriosScreen';
+import AboutScreen from './screens/AboutScreen';
+import MotorcycleManagementScreen from './screens/MotorcycleManagementScreen';
 
 // Importações para i18n e notificações
-import i18n, { setupI18n, changeLanguage, getCurrentLanguage, getAvailableLanguages } from "./services/i18n";
-import { registerForPushNotificationsAsync } from "./services/notificationService";
+import i18n, {
+  setupI18n,
+  changeLanguage,
+  getCurrentLanguage,
+  getAvailableLanguages,
+} from './services/i18n';
+import { registerForPushNotificationsAsync } from './services/notificationService';
 import * as Notifications from 'expo-notifications';
 
-import { ThemeProvider, ThemeContext } from "./contexts/ThemeContext";
+import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
 
 import {
   DrawerContentScrollView,
   DrawerItemList,
-} from "@react-navigation/drawer";
+} from '@react-navigation/drawer';
 import {
   View,
   Text,
@@ -33,11 +38,11 @@ import {
   Switch,
   Image,
   Alert,
-} from "react-native";
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -45,9 +50,9 @@ const Stack = createStackNavigator();
 function CustomDrawerContent(props) {
   const { usuario, onLogout, toggleTheme, theme } = props;
   const [currentLanguage, setCurrentLanguage] = useState(getCurrentLanguage());
-  const isDark = (theme?.background ?? "#000") !== "#fff";
+  const isDark = (theme?.background ?? '#000') !== '#fff';
 
-  const handleLanguageChange = async (language) => {
+  const handleLanguageChange = async language => {
     await changeLanguage(language);
     setCurrentLanguage(language);
     // Força re-render do app
@@ -70,17 +75,17 @@ function CustomDrawerContent(props) {
         <Image
           source={{
             uri:
-              "https://ui-avatars.com/api/?name=" +
+              'https://ui-avatars.com/api/?name=' +
               encodeURIComponent(
-                usuario?.displayName || usuario?.email || "U"
+                usuario?.displayName || usuario?.email || 'U'
               ) +
-              "&background=111111&color=B6FF00",
+              '&background=111111&color=B6FF00',
           }}
           style={styles.avatar}
         />
         <View style={{ flex: 1 }}>
           <Text style={[styles.headerTitle, { color: theme.text }]}>
-            {usuario?.displayName || "Bem-vindo!"}
+            {usuario?.displayName || 'Bem-vindo!'}
           </Text>
           <Text style={[styles.headerSubtitle, { color: theme.text }]}>
             {usuario?.email}
@@ -96,7 +101,9 @@ function CustomDrawerContent(props) {
       {/* Ações rápidas no rodapé */}
       <View style={styles.footer}>
         {/* Seletor de idioma */}
-        <View style={[styles.rowButton, { backgroundColor: theme.inputBackground }]}>
+        <View
+          style={[styles.rowButton, { backgroundColor: theme.inputBackground }]}
+        >
           <View style={styles.rowLeft}>
             <Ionicons
               name="language"
@@ -104,9 +111,7 @@ function CustomDrawerContent(props) {
               color={theme.primary}
               style={{ marginRight: 10 }}
             />
-            <Text style={[styles.rowText, { color: theme.text }]}>
-              Idioma
-            </Text>
+            <Text style={[styles.rowText, { color: theme.text }]}>Idioma</Text>
           </View>
           <View style={styles.pickerContainer}>
             <Picker
@@ -129,7 +134,7 @@ function CustomDrawerContent(props) {
         >
           <View style={styles.rowLeft}>
             <Ionicons
-              name={isDark ? "moon" : "sunny"}
+              name={isDark ? 'moon' : 'sunny'}
               size={22}
               color={theme.primary}
               style={{ marginRight: 10 }}
@@ -141,8 +146,8 @@ function CustomDrawerContent(props) {
           <Switch
             value={isDark}
             onValueChange={toggleTheme}
-            thumbColor={isDark ? theme.primary : "#e5e5e5"}
-            trackColor={{ false: "#9e9e9e", true: "#3d3d3d" }}
+            thumbColor={isDark ? theme.primary : '#e5e5e5'}
+            trackColor={{ false: '#9e9e9e', true: '#3d3d3d' }}
           />
         </TouchableOpacity>
 
@@ -159,7 +164,9 @@ function CustomDrawerContent(props) {
               color="#F44336"
               style={{ marginRight: 10 }}
             />
-            <Text style={[styles.rowText, { color: theme.text }]}>{i18n.t('auth.logout')}</Text>
+            <Text style={[styles.rowText, { color: theme.text }]}>
+              {i18n.t('auth.logout')}
+            </Text>
           </View>
           <Ionicons name="chevron-forward" size={18} color={theme.text} />
         </TouchableOpacity>
@@ -180,9 +187,9 @@ function AppDrawer({ usuario, onLogout }) {
         drawerStyle: { backgroundColor: theme.background },
         drawerActiveTintColor: theme.primary,
         drawerInactiveTintColor: theme.text,
-        drawerLabelStyle: { fontWeight: "600" },
+        drawerLabelStyle: { fontWeight: '600' },
       }}
-      drawerContent={(props) => (
+      drawerContent={props => (
         <CustomDrawerContent
           {...props}
           usuario={usuario}
@@ -233,9 +240,13 @@ function AppDrawer({ usuario, onLogout }) {
         component={MotorcycleManagementScreen}
         options={{
           drawerIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="motorbike-electric" size={size} color={color} />
+            <MaterialCommunityIcons
+              name="motorbike-electric"
+              size={size}
+              color={color}
+            />
           ),
-          title: "Gerenciar Motos",
+          title: 'Gerenciar Motos',
         }}
       />
       <Drawer.Screen
@@ -257,12 +268,12 @@ function AuthStack({ handleLoginSuccess }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login">
-        {(props) => (
+        {props => (
           <LoginScreen {...props} onLoginSuccess={handleLoginSuccess} />
         )}
       </Stack.Screen>
       <Stack.Screen name="Register">
-        {(props) => (
+        {props => (
           <RegisterScreen {...props} onRegisterSuccess={handleLoginSuccess} />
         )}
       </Stack.Screen>
@@ -284,22 +295,24 @@ export default function App() {
       try {
         // Configurar i18n
         await setupI18n();
-        
+
         // Registrar para notificações push
         const token = await registerForPushNotificationsAsync();
         setExpoPushToken(token);
-        
+
         // Configurar listeners de notificação
-        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-          console.log('Notification received:', notification);
-        });
-        
-        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-          console.log('Notification response:', response);
-        });
-        
+        notificationListener.current =
+          Notifications.addNotificationReceivedListener(notification => {
+            console.log('Notification received:', notification);
+          });
+
+        responseListener.current =
+          Notifications.addNotificationResponseReceivedListener(response => {
+            console.log('Notification response:', response);
+          });
+
         // Restaurar sessão do usuário
-        const user = await AsyncStorage.getItem("usuarioLogado");
+        const user = await AsyncStorage.getItem('usuarioLogado');
         if (user) setUsuario(JSON.parse(user));
       } catch (error) {
         console.error('Error initializing app:', error);
@@ -307,13 +320,15 @@ export default function App() {
         setLoading(false);
       }
     };
-    
+
     initializeApp();
-    
+
     // Cleanup
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
       }
       if (responseListener.current) {
         Notifications.removeNotificationSubscription(responseListener.current);
@@ -322,14 +337,14 @@ export default function App() {
   }, []);
 
   // Normaliza e salva o usuário (usado por Login e Register)
-  const handleLoginSuccess = async (u) => {
+  const handleLoginSuccess = async u => {
     const normalized = {
       uid: u?.uid,
       email: u?.email,
       rm: u?.rm ?? null,
       displayName: u?.displayName ?? null,
     };
-    await AsyncStorage.setItem("usuarioLogado", JSON.stringify(normalized));
+    await AsyncStorage.setItem('usuarioLogado', JSON.stringify(normalized));
     setUsuario(normalized);
   };
 
@@ -337,7 +352,7 @@ export default function App() {
     try {
       await signOut(auth);
     } catch (e) {}
-    await AsyncStorage.removeItem("usuarioLogado");
+    await AsyncStorage.removeItem('usuarioLogado');
     setUsuario(null);
   };
 
@@ -365,8 +380,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     padding: 14,
     borderRadius: 16,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   avatar: {
     width: 46,
@@ -376,7 +391,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: '700',
     marginBottom: 2,
   },
   headerSubtitle: {
@@ -389,20 +404,20 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   rowButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderRadius: 12,
   },
   rowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   rowText: {
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   pickerContainer: {
     width: 120,

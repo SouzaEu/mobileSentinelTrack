@@ -4,7 +4,7 @@ import React, {
   useContext,
   useCallback,
   useMemo,
-} from "react";
+} from 'react';
 import {
   View,
   Text,
@@ -13,14 +13,14 @@ import {
   RefreshControl,
   TouchableOpacity,
   ActivityIndicator,
-} from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { ThemeContext } from "../contexts/ThemeContext";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { ThemeContext } from '../contexts/ThemeContext';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 // === IMPORTES DA API (.NET) ===
-import { listSectors } from "../services/api/sectors";
-import { listMotorcycles } from "../services/api/motorcycles";
+import { listSectors } from '../services/api/sectors';
+import { listMotorcycles } from '../services/api/motorcycles';
 
 /**
  * ASSUMPTIONS:
@@ -33,7 +33,7 @@ import { listMotorcycles } from "../services/api/motorcycles";
 export default function DashboardScreen() {
   const { theme } = useContext(ThemeContext);
 
-  const [setor, setSetor] = useState("A"); // A | B | C | D
+  const [setor, setSetor] = useState('A'); // A | B | C | D
   const [sectors, setSectors] = useState([]);
   const [motorcycles, setMotorcycles] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -60,8 +60,8 @@ export default function DashboardScreen() {
   // lista das vagas do setor selecionado (filtra pelo prefixo A/B/C/D)
   const vagasSetor = useMemo(() => {
     return sectors
-      .map((s) => s.code)
-      .filter((code) => typeof code === "string" && code.startsWith(setor))
+      .map(s => s.code)
+      .filter(code => typeof code === 'string' && code.startsWith(setor))
       .sort((a, b) => {
         const na = parseInt(a.slice(1), 10);
         const nb = parseInt(b.slice(1), 10);
@@ -114,45 +114,45 @@ export default function DashboardScreen() {
   };
 
   // status por vaga no setor atual
-  const getStatusVaga = (vagaCode) => {
+  const getStatusVaga = vagaCode => {
     const ocupada = ocupadasSet.has(vagaCode);
-    if (!ocupada) return "empty";
+    if (!ocupada) return 'empty';
 
     const sec = sectorByCode.get(vagaCode);
     const moto = motorcycles.find(
-      (m) => m.sectorId === (sec?.id || sec?.sectorId)
+      m => m.sectorId === (sec?.id || sec?.sectorId)
     );
-    if (moto && (!moto.placa || String(moto.placa).trim() === ""))
-      return "noplate";
+    if (moto && (!moto.placa || String(moto.placa).trim() === ''))
+      return 'noplate';
 
-    return "occupied";
+    return 'occupied';
   };
 
   // métricas (no setor atual)
   const totalMotosSetor = useMemo(() => {
     const idsDoSetor = new Set(
       sectors
-        .filter((s) => s.code?.startsWith(setor))
-        .map((s) => s.id || s.sectorId)
+        .filter(s => s.code?.startsWith(setor))
+        .map(s => s.id || s.sectorId)
     );
-    return motorcycles.filter((m) => idsDoSetor.has(m.sectorId)).length;
+    return motorcycles.filter(m => idsDoSetor.has(m.sectorId)).length;
   }, [sectors, motorcycles, setor]);
 
   const semPlacaSetor = useMemo(() => {
     const idsDoSetor = new Set(
       sectors
-        .filter((s) => s.code?.startsWith(setor))
-        .map((s) => s.id || s.sectorId)
+        .filter(s => s.code?.startsWith(setor))
+        .map(s => s.id || s.sectorId)
     );
     return motorcycles.filter(
-      (m) =>
+      m =>
         idsDoSetor.has(m.sectorId) &&
-        (!m.placa || String(m.placa).trim() === "")
+        (!m.placa || String(m.placa).trim() === '')
     ).length;
   }, [sectors, motorcycles, setor]);
 
   const vagasDisponiveis = useMemo(() => {
-    return vagasSetor.filter((code) => !ocupadasSet.has(code)).length;
+    return vagasSetor.filter(code => !ocupadasSet.has(code)).length;
   }, [vagasSetor, ocupadasSet]);
 
   // UI Components
@@ -173,7 +173,7 @@ export default function DashboardScreen() {
 
   const SectorTabs = () => (
     <View style={styles(theme).tabs}>
-      {["A", "B", "C", "D"].map((s) => {
+      {['A', 'B', 'C', 'D'].map(s => {
         const active = setor === s;
         return (
           <TouchableOpacity
@@ -190,7 +190,7 @@ export default function DashboardScreen() {
             <Text
               style={[
                 styles(theme).tabText,
-                active && { color: theme.background, fontWeight: "800" },
+                active && { color: theme.background, fontWeight: '800' },
               ]}
             >
               Setor {s}
@@ -215,19 +215,19 @@ export default function DashboardScreen() {
     <View style={styles(theme).legendRow}>
       <View style={styles(theme).legendItem}>
         <View
-          style={[styles(theme).legendDot, { backgroundColor: "#4CAF50" }]}
+          style={[styles(theme).legendDot, { backgroundColor: '#4CAF50' }]}
         />
         <Text style={styles(theme).legendText}>Livre</Text>
       </View>
       <View style={styles(theme).legendItem}>
         <View
-          style={[styles(theme).legendDot, { backgroundColor: "#9E9E9E" }]}
+          style={[styles(theme).legendDot, { backgroundColor: '#9E9E9E' }]}
         />
         <Text style={styles(theme).legendText}>Ocupada</Text>
       </View>
       <View style={styles(theme).legendItem}>
         <View
-          style={[styles(theme).legendDot, { backgroundColor: "#F44336" }]}
+          style={[styles(theme).legendDot, { backgroundColor: '#F44336' }]}
         />
         <Text style={styles(theme).legendText}>Sem placa</Text>
       </View>
@@ -236,9 +236,9 @@ export default function DashboardScreen() {
 
   const Vaga = ({ vaga }) => {
     const status = getStatusVaga(vaga);
-    let color = "#4CAF50"; // livre
-    if (status === "occupied") color = "#9E9E9E";
-    if (status === "noplate") color = "#F44336";
+    let color = '#4CAF50'; // livre
+    if (status === 'occupied') color = '#9E9E9E';
+    if (status === 'noplate') color = '#F44336';
 
     return (
       <View style={[styles(theme).vaga, { backgroundColor: color }]}>
@@ -249,7 +249,7 @@ export default function DashboardScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" />
         <Text style={{ marginTop: 8, color: theme.text }}>Carregando...</Text>
       </View>
@@ -295,7 +295,7 @@ export default function DashboardScreen() {
       <FlatList
         data={vagasSetor}
         numColumns={3}
-        keyExtractor={(item) => item}
+        keyExtractor={item => item}
         columnWrapperStyle={{ gap: 10 }}
         contentContainerStyle={{ paddingVertical: 10, paddingBottom: 24 }}
         renderItem={({ item }) => <Vaga vaga={item} />}
@@ -307,7 +307,7 @@ export default function DashboardScreen() {
           />
         }
         ListEmptyComponent={
-          <Text style={{ color: theme.text + "88", marginTop: 8 }}>
+          <Text style={{ color: theme.text + '88', marginTop: 8 }}>
             Nenhuma vaga cadastrada para o setor {setor}.
           </Text>
         }
@@ -316,7 +316,7 @@ export default function DashboardScreen() {
             <Ionicons
               name="information-circle-outline"
               size={16}
-              color={theme.text + "88"}
+              color={theme.text + '88'}
             />
             <Text style={styles(theme).footerHintText}>
               A ocupação usa os setores da API e as motos ativas por setor. Se
@@ -330,32 +330,32 @@ export default function DashboardScreen() {
   );
 }
 
-const styles = (theme) =>
+const styles = theme =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background, padding: 16 },
     header: { marginBottom: 8 },
     headerLeft: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 8,
       marginBottom: 6,
     },
-    title: { fontSize: 24, fontWeight: "800", color: theme.text },
-    subtitle: { color: theme.text + "99", marginBottom: 4 },
-    lastUpdated: { color: theme.text + "66", fontSize: 12 },
+    title: { fontSize: 24, fontWeight: '800', color: theme.text },
+    subtitle: { color: theme.text + '99', marginBottom: 4 },
+    lastUpdated: { color: theme.text + '66', fontSize: 12 },
 
-    tabs: { flexDirection: "row", gap: 8, marginVertical: 12 },
+    tabs: { flexDirection: 'row', gap: 8, marginVertical: 12 },
     tab: {
       paddingVertical: 8,
       paddingHorizontal: 14,
       borderRadius: 999,
       backgroundColor: theme.inputBackground,
       borderWidth: 1,
-      borderColor: theme.text + "22",
+      borderColor: theme.text + '22',
     },
     tabText: {
       color: theme.text,
-      fontWeight: "600",
+      fontWeight: '600',
       fontSize: 12,
       letterSpacing: 0.2,
     },
@@ -367,23 +367,23 @@ const styles = (theme) =>
       paddingVertical: 12,
       paddingHorizontal: 14,
       borderWidth: 1,
-      borderColor: theme.text + "10",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      borderColor: theme.text + '10',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
     },
-    statLeft: { flexDirection: "row", alignItems: "center", gap: 8 },
-    statLabel: { color: theme.text, fontWeight: "600" },
-    statValue: { fontWeight: "900", fontSize: 18, letterSpacing: 0.3 },
+    statLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    statLabel: { color: theme.text, fontWeight: '600' },
+    statValue: { fontWeight: '900', fontSize: 18, letterSpacing: 0.3 },
 
     legendRow: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 16,
       marginTop: 8,
       marginBottom: 4,
     },
-    legendItem: { flexDirection: "row", alignItems: "center", gap: 6 },
+    legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
     legendDot: { width: 12, height: 12, borderRadius: 6 },
     legendText: { color: theme.text, fontSize: 12 },
 
@@ -392,17 +392,17 @@ const styles = (theme) =>
       minWidth: 90,
       height: 56,
       borderRadius: 12,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       marginBottom: 10,
     },
-    vagaText: { color: "#ffffff", fontWeight: "800", letterSpacing: 0.3 },
+    vagaText: { color: '#ffffff', fontWeight: '800', letterSpacing: 0.3 },
 
     footerHint: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 6,
       marginTop: 6,
     },
-    footerHintText: { color: theme.text + "88", fontSize: 12, flex: 1 },
+    footerHintText: { color: theme.text + '88', fontSize: 12, flex: 1 },
   });
