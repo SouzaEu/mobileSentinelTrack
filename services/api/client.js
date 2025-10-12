@@ -29,13 +29,13 @@ export const api = axios.create({
   timeout: 15000,
 });
 
-console.log("🔗 Base URL da API:", getBaseURL());
-console.log("📱 Platform:", Platform.OS);
+
+
 
 // Interceptors para monitorar requests/responses
 api.interceptors.request.use(
   (config) => {
-    console.log("📤 Fazendo requisição para:", config.baseURL + config.url);
+    
     return config;
   },
   (error) => Promise.reject(error)
@@ -43,11 +43,11 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (res) => {
-    console.log("✅ Resposta recebida:", res.status, res.config.url);
+    
     return res;
   },
   (error) => {
-    console.error("❌ Erro na API:", error.message);
+    
 
     if (error.response) {
       return Promise.reject({

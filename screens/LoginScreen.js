@@ -7,20 +7,19 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { ThemeContext } from "../contexts/ThemeContext";
 
 export default function LoginScreen({ onLoginSuccess }) {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const navigation = useNavigation();
 
   const handleLogin = async () => {
-    console.log("Tentando login com:", email);
+    
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -28,12 +27,10 @@ export default function LoginScreen({ onLoginSuccess }) {
         senha
       );
       const user = userCredential.user;
-      console.log("Login bem-sucedido:", user.uid);
+      
       onLoginSuccess?.(user);
-      Alert.alert("Sucesso", "Login realizado!");
     } catch (error) {
-      console.error("Erro no login:", error);
-      Alert.alert("Erro", error.message);
+      Alert.alert("Erro", "Falha no login");
     }
   };
 

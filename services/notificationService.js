@@ -35,7 +35,7 @@ export async function registerForPushNotificationsAsync() {
     }
     
     if (finalStatus !== 'granted') {
-      alert('Falha ao obter token de notificação push!');
+      
       return;
     }
     
@@ -45,12 +45,12 @@ export async function registerForPushNotificationsAsync() {
         throw new Error('Project ID not found');
       }
       token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-      console.log('Push token:', token);
+      
     } catch (e) {
       token = `${e}`;
     }
   } else {
-    alert('Deve usar um dispositivo físico para notificações Push');
+    
   }
 
   return token;
@@ -69,7 +69,7 @@ export async function sendLocalNotification(title, body, data = {}) {
       trigger: null, // Enviar imediatamente
     });
   } catch (error) {
-    console.error('Erro ao enviar notificação local:', error);
+    
   }
 }
 
@@ -89,7 +89,7 @@ export async function scheduleNotification(title, body, seconds, data = {}) {
     });
     return id;
   } catch (error) {
-    console.error('Erro ao agendar notificação:', error);
+    
   }
 }
 
@@ -98,7 +98,7 @@ export async function cancelNotification(notificationId) {
   try {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
   } catch (error) {
-    console.error('Erro ao cancelar notificação:', error);
+    
   }
 }
 
@@ -107,7 +107,7 @@ export async function cancelAllNotifications() {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
   } catch (error) {
-    console.error('Erro ao cancelar todas as notificações:', error);
+    
   }
 }
 

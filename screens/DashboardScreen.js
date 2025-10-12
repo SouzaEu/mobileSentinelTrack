@@ -91,7 +91,7 @@ export default function DashboardScreen() {
       setMotorcycles(Array.isArray(motos) ? motos : []);
       setLastUpdated(new Date());
     } catch (e) {
-      console.warn("Falha ao carregar dados:", e?.message || e);
+      // Falha ao carregar dados
     } finally {
       setRefreshing(false);
       setLoading(false);

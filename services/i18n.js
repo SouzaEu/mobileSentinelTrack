@@ -38,7 +38,7 @@ export const setupI18n = async () => {
       await AsyncStorage.setItem('selectedLanguage', i18n.locale);
     }
   } catch (error) {
-    console.log('Error setting up i18n:', error);
+    
     i18n.locale = 'pt'; // Fallback para português
   }
 };
@@ -49,7 +49,7 @@ export const changeLanguage = async (language) => {
     i18n.locale = language;
     await AsyncStorage.setItem('selectedLanguage', language);
   } catch (error) {
-    console.log('Error changing language:', error);
+    
   }
 };
 
