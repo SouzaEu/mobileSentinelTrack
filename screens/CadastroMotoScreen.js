@@ -18,6 +18,11 @@ import { listSectors } from "../services/api/sectors";
 import { listMotorcycles, createMotorcycle } from "../services/api/motorcycles";
 import { createMovement } from "../services/api/movements";
 
+// === IMPORTES DE NOTIFICAÇÕES E I18N ===
+import { sendMotorcycleNotification } from "../services/notificationService";
+import { validateBrazilianLicensePlate } from "../services/api/validators";
+import i18n from "../services/i18n";
+
 export default function CadastroMotoScreen({ userRM }) {
   const { theme } = useContext(ThemeContext);
 
@@ -98,6 +103,13 @@ export default function CadastroMotoScreen({ userRM }) {
   }, [setor]);
 
   async function handleCadastro() {
+    // Validar placa
+    const plateValidation = validateBrazilianLicensePlate(placa);
+    if (!plateValidation.isValid) {
+      Alert.alert("Erro", plateValidation.message);
+      return;
+    }
+    
     if (!vagaSelecionada) {
       Alert.alert("Ops", "Selecione uma vaga livre antes de cadastrar.");
       return;
@@ -127,7 +139,11 @@ export default function CadastroMotoScreen({ userRM }) {
     setLoading(true);
     try {
       // cria a moto já alocada no setor escolhido
-      await createMotorcycle({ motorcycleId, sectorId });
+      await createMotorcycle({ 
+        motorcycleId, 
+        sectorId, 
+        licensePlate: plateValidation.formattedPlate 
+      });
 
       try {
         await createMovement({ motorcycleId, sectorId });
@@ -135,10 +151,21 @@ export default function CadastroMotoScreen({ userRM }) {
 
       // refresh
       await loadAll();
+      
+      // Enviar notificação
+      sendMotorcycleNotification.newMotorcycle(
+        placa,
+        `Setor ${setor}`,
+        vagaSelecionada
+      );
+      
       setPlaca("");
       setVagaSelecionada(null);
 
-      Alert.alert("Sucesso", "Moto cadastrada com sucesso!");
+      Alert.alert(
+        i18n.t('common.success'),
+        i18n.t('motorcycles.motorcycleAdded')
+      );
     } catch (e) {
       Alert.alert(
         "Erro ao cadastrar",
