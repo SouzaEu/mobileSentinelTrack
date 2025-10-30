@@ -68,7 +68,9 @@ export async function sendLocalNotification(title, body, data = {}) {
       },
       trigger: null, // Enviar imediatamente
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error sending local notification:', error);
+  }
 }
 
 // Função para agendar notificação
@@ -86,21 +88,27 @@ export async function scheduleNotification(title, body, seconds, data = {}) {
       },
     });
     return id;
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error scheduling notification:', error);
+  }
 }
 
 // Função para cancelar notificação agendada
 export async function cancelNotification(notificationId) {
   try {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error canceling notification:', error);
+  }
 }
 
 // Função para cancelar todas as notificações agendadas
 export async function cancelAllNotifications() {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error canceling all notifications:', error);
+  }
 }
 
 // Tipos de notificações específicas do app

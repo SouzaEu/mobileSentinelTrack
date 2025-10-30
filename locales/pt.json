@@ -35,10 +35,25 @@
     "registerError": "Erro ao fazer cadastro",
     "invalidEmail": "E-mail inválido",
     "passwordTooShort": "Senha deve ter pelo menos 6 caracteres",
-    "passwordsDontMatch": "Senhas não coincidem",
+    "passwordsDontMatch": "As senhas não coincidem",
+    "passwordsDontMatch2": "Senhas não coincidem",
     "emailRequired": "E-mail é obrigatório",
     "passwordRequired": "Senha é obrigatória",
-    "nameRequired": "Nome é obrigatório"
+    "nameRequired": "Nome é obrigatório",
+    "emailAlreadyInUse": "Este email já está em uso",
+    "emailAlreadyInUseTitle": "Email em uso",
+    "goToLogin": "Ir para Login",
+    "forgotPasswordAction": "Esqueci a senha",
+    "emailSent": "Email enviado",
+    "checkEmailReset": "Verifique seu email para redefinir a senha",
+    "errorSendingReset": "Não foi possível enviar o email de recuperação",
+    "invalidEmailError": "Email inválido. Verifique e tente novamente",
+    "weakPassword": "A senha é fraca. Use pelo menos 6 caracteres",
+    "registrationError": "Não foi possível cadastrar",
+    "loginErrorGeneric": "Erro no login",
+    "registering": "Cadastrando...",
+    "loggingIn": "Entrando...",
+    "back": "Voltar"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -56,7 +71,15 @@
     "sectorA": "Setor A",
     "sectorB": "Setor B",
     "sectorC": "Setor C",
-    "noData": "Nenhum dado disponível"
+    "noData": "Nenhum dado disponível",
+    "overview": "Visão geral de ocupação",
+    "lastUpdated": "Atualizado",
+    "sector": "Setor",
+    "free": "Livre",
+    "occupied": "Ocupada",
+    "noPlate": "Sem placa",
+    "motorcyclesInSector": "Motos no setor",
+    "freeSpots": "Vagas livres"
   },
   "motorcycles": {
     "title": "Cadastro de Motos",
@@ -100,7 +123,8 @@
   "theme": {
     "lightTheme": "Tema Claro",
     "darkTheme": "Tema Escuro",
-    "systemTheme": "Tema do Sistema"
+    "systemTheme": "Tema do Sistema",
+    "toggle": "Alternar Tema"
   },
   "about": {
     "title": "Sobre o App",
@@ -110,12 +134,57 @@
     "commitHash": "Hash do Commit",
     "developers": "Desenvolvedores",
     "contact": "Contato",
-    "license": "Licença"
+    "license": "Licença",
+    "appInfo": "Informações do App",
+    "projectInfo": "Sobre o Projeto",
+    "projectDescription": "SentinelTrack é uma aplicação mobile desenvolvida como parte do Challenge FIAP 2025 - 2º Semestre. O app permite gerenciar motocicletas em pátios logísticos, com funcionalidades de cadastro, visualização em dashboard e geração de relatórios.",
+    "techUsed": "Tecnologias Utilizadas:",
+    "copyright": "© 2025 FIAP - Todos os direitos reservados",
+    "success": "Sucesso",
+    "hashCopied": "Hash copiado para a área de transferência",
+    "error": "Erro",
+    "couldNotCopy": "Não foi possível copiar o hash"
   },
   "notifications": {
     "newMotorcycle": "Nova moto cadastrada",
     "motorcycleRemoved": "Moto removida do pátio",
     "spotAvailable": "Vaga disponível",
     "maintenanceReminder": "Lembrete de manutenção"
+  },
+  "management": {
+    "title": "Gerenciar Motos",
+    "confirmDelete": "Confirmar Exclusão",
+    "deleteMessage": "Deseja realmente excluir a moto",
+    "moveMotorcycle": "Mover Moto",
+    "selectNewSector": "Selecione o novo setor:",
+    "movedSuccess": "Moto movida com sucesso!",
+    "noOtherSectors": "Não há outros setores disponíveis",
+    "warning": "Aviso",
+    "motorcycleMovedSuccess": "Moto movida com sucesso!",
+    "errorMovingMotorcycle": "Erro ao mover moto",
+    "errorDeletingMotorcycle": "Erro ao excluir moto",
+    "errorLoadingData": "Erro ao carregar dados",
+    "noMotorcyclesRegistered": "Nenhuma moto cadastrada",
+    "sectorRequired": "Setor é obrigatório"
+  },
+  "cadastro": {
+    "title": "Cadastro de Moto",
+    "subtitle": "Escolha o setor, selecione uma vaga livre e informe a placa.",
+    "sector": "Setor",
+    "plate": "Placa",
+    "platePlaceholder": "Digite a placa (opcional)",
+    "sectorsVacancies": "Vagas do setor",
+    "clear": "Limpar",
+    "register": "Cadastrar",
+    "saving": "Salvando...",
+    "selectVacancy": "Selecione uma vaga livre antes de cadastrar.",
+    "noVacancies": "Nenhuma vaga cadastrada no setor {setor}.",
+    "vacancyOccupied": "Essa vaga está ocupada. Escolha outra vaga.",
+    "sectorNotFound": "Setor selecionado não encontrado.",
+    "sectorWithoutId": "Setor sem ID válido.",
+    "registerError": "Erro ao cadastrar",
+    "serverError": "Falha ao enviar para o servidor.",
+    "occupied": "Ocupada",
+    "free": "Livre"
   }
 }

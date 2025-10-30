@@ -21,9 +21,9 @@ import { createMovement } from '../services/api/movements';
 // === IMPORTES DE NOTIFICAÇÕES E I18N ===
 import { sendMotorcycleNotification } from '../services/notificationService';
 import { validateBrazilianLicensePlate } from '../services/api/validators';
-import i18n from '../services/i18n';
+import i18n from '../services/i18n_clean';
 
-export default function CadastroMotoScreen({ userRM }) {
+export default function CadastroMotoScreen({ userRM: _userRM }) {
   const { theme } = useContext(ThemeContext);
 
   // estado de UI
@@ -87,7 +87,10 @@ export default function CadastroMotoScreen({ userRM }) {
       setSectors(Array.isArray(secs) ? secs : []);
       setMotorcycles(Array.isArray(motos) ? motos : []);
     } catch (e) {
-      Alert.alert('Erro', e?.message || 'Falha ao carregar dados do servidor.');
+      Alert.alert(
+        i18n.t('common.error'),
+        e?.message || i18n.t('management.errorLoadingData')
+      );
     } finally {
       setLoading(false);
     }
@@ -106,34 +109,32 @@ export default function CadastroMotoScreen({ userRM }) {
     // Validar placa
     const plateValidation = validateBrazilianLicensePlate(placa);
     if (!plateValidation.isValid) {
-      Alert.alert('Erro', plateValidation.message);
+      Alert.alert(i18n.t('common.error'), plateValidation.message);
       return;
     }
 
     if (!vagaSelecionada) {
-      Alert.alert('Ops', 'Selecione uma vaga livre antes de cadastrar.');
+      Alert.alert(i18n.t('common.warning'), i18n.t('cadastro.selectVacancy'));
       return;
     }
     if (ocupadas.has(vagaSelecionada)) {
-      Alert.alert('Ops', 'Essa vaga está ocupada. Escolha outra vaga.');
+      Alert.alert(i18n.t('common.warning'), i18n.t('cadastro.vacancyOccupied'));
       return;
     }
 
     // pega o setor escolhido pelo CODE (ex: "A3") -> id (Guid) para enviar à API
     const sector = sectorByCode.get(vagaSelecionada);
     if (!sector) {
-      Alert.alert('Erro', 'Setor selecionado não encontrado.');
+      Alert.alert(i18n.t('common.error'), i18n.t('cadastro.sectorNotFound'));
       return;
     }
 
     // AJUSTE: se seu ID do setor vier como sector.sectorId, troque abaixo
     const sectorId = sector.id || sector.sectorId;
     if (!sectorId) {
-      Alert.alert('Erro', 'Setor sem ID válido.');
+      Alert.alert(i18n.t('common.error'), i18n.t('cadastro.sectorWithoutId'));
       return;
-    }
-
-    // gera um novo GUID para a moto (se o backend não gerar)
+    } // gera um novo GUID para a moto (se o backend não gerar)
     const motorcycleId = uuid.v4();
 
     setLoading(true);
@@ -147,7 +148,9 @@ export default function CadastroMotoScreen({ userRM }) {
 
       try {
         await createMovement({ motorcycleId, sectorId });
-      } catch (_) {}
+      } catch {
+        // Movimento opcional - erro ignorado
+      }
 
       // refresh
       await loadAll();
@@ -168,8 +171,8 @@ export default function CadastroMotoScreen({ userRM }) {
       );
     } catch (e) {
       Alert.alert(
-        'Erro ao cadastrar',
-        e?.message || 'Falha ao enviar para o servidor.'
+        i18n.t('cadastro.registerError'),
+        e?.message || i18n.t('cadastro.serverError')
       );
     } finally {
       setLoading(false);
@@ -190,16 +193,14 @@ export default function CadastroMotoScreen({ userRM }) {
             size={24}
             color={theme.primary}
           />
-          <Text style={styles(theme).titulo}>Cadastro de Moto</Text>
+          <Text style={styles(theme).titulo}>{i18n.t('cadastro.title')}</Text>
         </View>
         <View style={styles(theme).smallPill}>
           <Ionicons name="grid-outline" size={14} color={theme.background} />
           <Text style={styles(theme).smallPillText}>{vagasDoSetor.length}</Text>
         </View>
       </View>
-      <Text style={styles(theme).subtitulo}>
-        Escolha o setor, selecione uma vaga livre e informe a placa.
-      </Text>
+      <Text style={styles(theme).subtitulo}>{i18n.t('cadastro.subtitle')}</Text>
     </View>
   );
 
@@ -222,7 +223,7 @@ export default function CadastroMotoScreen({ userRM }) {
             ativo && { color: theme.background, fontWeight: '800' },
           ]}
         >
-          {label || 'Todos'}
+          {i18n.t(`dashboard.sector`)} {label}
         </Text>
       </TouchableOpacity>
     );
@@ -271,7 +272,7 @@ export default function CadastroMotoScreen({ userRM }) {
             color={isOcupada ? '#7f1d1d' : '#14532d'}
           />
           <Text style={styles(theme).vagaBadgeText(isOcupada)}>
-            {isOcupada ? 'Ocupada' : 'Livre'}
+            {isOcupada ? i18n.t('cadastro.occupied') : i18n.t('cadastro.free')}
           </Text>
         </View>
       </TouchableOpacity>
@@ -282,7 +283,9 @@ export default function CadastroMotoScreen({ userRM }) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" />
-        <Text style={{ marginTop: 8, color: theme.text }}>Carregando...</Text>
+        <Text style={{ marginTop: 8, color: theme.text }}>
+          {i18n.t('common.loading')}
+        </Text>
       </View>
     );
   }
@@ -293,10 +296,10 @@ export default function CadastroMotoScreen({ userRM }) {
 
       {/* Card de formulário */}
       <View style={styles(theme).formCard}>
-        <Text style={styles(theme).label}>Setor</Text>
+        <Text style={styles(theme).label}>{i18n.t('cadastro.sector')}</Text>
         <LinhaSetor />
 
-        <Text style={styles(theme).label}>Placa</Text>
+        <Text style={styles(theme).label}>{i18n.t('cadastro.plate')}</Text>
         <View style={styles(theme).inputWrap}>
           <Ionicons
             name="car-outline"
@@ -307,14 +310,16 @@ export default function CadastroMotoScreen({ userRM }) {
           <TextInput
             value={placa}
             onChangeText={t => setPlaca((t || '').toUpperCase())}
-            placeholder="Digite a placa (opcional)"
+            placeholder={i18n.t('cadastro.platePlaceholder')}
             style={styles(theme).input}
             placeholderTextColor={theme.text + '80'}
             autoCapitalize="characters"
           />
         </View>
 
-        <Text style={styles(theme).label}>Vagas do setor {setor}</Text>
+        <Text style={styles(theme).label}>
+          {i18n.t('cadastro.sectorsVacancies')} {setor}
+        </Text>
         <FlatList
           data={vagasDoSetor}
           keyExtractor={item => item}
@@ -325,7 +330,7 @@ export default function CadastroMotoScreen({ userRM }) {
           renderItem={({ item }) => <VagaItem vaga={item} />}
           ListEmptyComponent={
             <Text style={{ color: theme.text + '99', marginTop: 8 }}>
-              Nenhuma vaga cadastrada no setor {setor}.
+              {i18n.t('cadastro.noVacancies').replace('{setor}', setor)}
             </Text>
           }
         />
@@ -337,7 +342,9 @@ export default function CadastroMotoScreen({ userRM }) {
             disabled={loading}
           >
             <Ionicons name="refresh" size={18} color={theme.text} />
-            <Text style={styles(theme).btnOutlinedText}>Limpar</Text>
+            <Text style={styles(theme).btnOutlinedText}>
+              {i18n.t('cadastro.clear')}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -347,7 +354,9 @@ export default function CadastroMotoScreen({ userRM }) {
           >
             <Ionicons name="save-outline" size={18} color={theme.background} />
             <Text style={styles(theme).btnPrimaryText}>
-              {loading ? 'Salvando...' : 'Cadastrar'}
+              {loading
+                ? i18n.t('cadastro.saving')
+                : i18n.t('cadastro.register')}
             </Text>
           </TouchableOpacity>
         </View>

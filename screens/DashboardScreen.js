@@ -17,6 +17,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import i18n from '../services/i18n_clean';
 
 // === IMPORTES DA API (.NET) ===
 import { listSectors } from '../services/api/sectors';
@@ -90,8 +91,8 @@ export default function DashboardScreen() {
       setSectors(Array.isArray(secs) ? secs : []);
       setMotorcycles(Array.isArray(motos) ? motos : []);
       setLastUpdated(new Date());
-    } catch (e) {
-      // Falha ao carregar dados
+    } catch {
+      // Falha ao carregar dados - silencioso por enquanto
     } finally {
       setRefreshing(false);
       setLoading(false);
@@ -160,12 +161,12 @@ export default function DashboardScreen() {
     <View style={styles(theme).header}>
       <View style={styles(theme).headerLeft}>
         <Ionicons name="speedometer" size={22} color={theme.primary} />
-        <Text style={styles(theme).title}>Dashboard</Text>
+        <Text style={styles(theme).title}>{i18n.t('dashboard.title')}</Text>
       </View>
-      <Text style={styles(theme).subtitle}>Visão geral de ocupação</Text>
+      <Text style={styles(theme).subtitle}>{i18n.t('dashboard.overview')}</Text>
       {lastUpdated && (
         <Text style={styles(theme).lastUpdated}>
-          Atualizado: {lastUpdated.toLocaleTimeString()}
+          {i18n.t('dashboard.lastUpdated')}: {lastUpdated.toLocaleTimeString()}
         </Text>
       )}
     </View>
@@ -193,7 +194,7 @@ export default function DashboardScreen() {
                 active && { color: theme.background, fontWeight: '800' },
               ]}
             >
-              Setor {s}
+              {i18n.t(`dashboard.sector`)} {s}
             </Text>
           </TouchableOpacity>
         );
@@ -217,19 +218,23 @@ export default function DashboardScreen() {
         <View
           style={[styles(theme).legendDot, { backgroundColor: '#4CAF50' }]}
         />
-        <Text style={styles(theme).legendText}>Livre</Text>
+        <Text style={styles(theme).legendText}>{i18n.t('dashboard.free')}</Text>
       </View>
       <View style={styles(theme).legendItem}>
         <View
           style={[styles(theme).legendDot, { backgroundColor: '#9E9E9E' }]}
         />
-        <Text style={styles(theme).legendText}>Ocupada</Text>
+        <Text style={styles(theme).legendText}>
+          {i18n.t('dashboard.occupied')}
+        </Text>
       </View>
       <View style={styles(theme).legendItem}>
         <View
           style={[styles(theme).legendDot, { backgroundColor: '#F44336' }]}
         />
-        <Text style={styles(theme).legendText}>Sem placa</Text>
+        <Text style={styles(theme).legendText}>
+          {i18n.t('dashboard.noPlate')}
+        </Text>
       </View>
     </View>
   );
@@ -251,7 +256,9 @@ export default function DashboardScreen() {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" />
-        <Text style={{ marginTop: 8, color: theme.text }}>Carregando...</Text>
+        <Text style={{ marginTop: 8, color: theme.text }}>
+          {i18n.t('common.loading')}
+        </Text>
       </View>
     );
   }
@@ -265,7 +272,7 @@ export default function DashboardScreen() {
       <View style={styles(theme).statsGrid}>
         <StatCard
           icon={<Ionicons name="bicycle" size={18} color={theme.primary} />}
-          label={`Motos no setor ${setor}`}
+          label={`${i18n.t('dashboard.motorcyclesInSector')} ${setor}`}
           value={totalMotosSetor}
           accent={theme.text}
         />
@@ -277,13 +284,13 @@ export default function DashboardScreen() {
               color="#F44336"
             />
           }
-          label="Sem placa"
+          label={i18n.t('dashboard.noPlate')}
           value={semPlacaSetor}
           accent="#F44336"
         />
         <StatCard
           icon={<Ionicons name="checkmark-done" size={18} color="#4CAF50" />}
-          label="Vagas livres"
+          label={i18n.t('dashboard.freeSpots')}
           value={vagasDisponiveis}
           accent="#4CAF50"
         />
@@ -308,7 +315,7 @@ export default function DashboardScreen() {
         }
         ListEmptyComponent={
           <Text style={{ color: theme.text + '88', marginTop: 8 }}>
-            Nenhuma vaga cadastrada para o setor {setor}.
+            {i18n.t('cadastro.noVacancies').replace('{setor}', setor)}
           </Text>
         }
         ListFooterComponent={

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,18 @@ import {
   Linking,
   Image,
   Alert,
+  Platform,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import i18n from '../services/i18n';
+import i18n from '../services/i18n_clean';
+import Constants from 'expo-constants';
 
-const COMMIT_HASH = '2f7a1dae85b4c90c9b3958febcfa5724fbcaaca5';
+const COMMIT_HASH =
+  Constants.expoConfig?.extra?.COMMIT_HASH ||
+  process.env.COMMIT_HASH ||
+  '2f7a1dae85b4c90c9b3958febcfa5724fbcaaca5';
 const APP_VERSION = '1.0.0';
 
 const developers = [
@@ -48,9 +53,9 @@ export default function AboutScreen() {
   const copyToClipboard = async text => {
     try {
       await Clipboard.setString(text);
-      Alert.alert('Sucesso', 'Hash copiado para a área de transferência');
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível copiar o hash');
+      Alert.alert(i18n.t('about.success'), i18n.t('about.hashCopied'));
+    } catch {
+      Alert.alert(i18n.t('about.error'), i18n.t('about.couldNotCopy'));
     }
   };
 

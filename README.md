@@ -53,11 +53,11 @@ SentinelTrack é uma aplicação mobile desenvolvida com React Native (Expo) par
 
 ## Participantes
 
-| Nome            | RM     | GitHub          |
-| --------------- | ------ | --------------- |
-| Thomaz Oliveira | 555323 | thomaz-oliveira |
-| Vinicius Souza  | 556089 | SouzaEu         |
-| Gabriel Duarte  | 556972 | gabriel-duarte  |
+| Nome            | RM     | GitHub        |
+| --------------- | ------ | ------------- |
+| Thomaz Oliveira | 555323 | thomazbartol. |
+| Vinicius Souza  | 556089 | SouzaEu       |
+| Gabriel Duarte  | 556972 | gabrielduart7 |
 
 ## Tecnologias Utilizadas
 
@@ -132,7 +132,19 @@ git clone https://github.com/SouzaEu/mobileSentinelTrack
 # 2. Instale as dependências
 npm install --legacy-peer-deps
 
-# 3. Inicie o projeto
+# 3. Configure as variáveis de ambiente
+# IMPORTANTE: Copie o arquivo .env.example para .env
+cp .env.example .env
+
+# Edite o arquivo .env com suas credenciais do Firebase:
+# - Acesse Firebase Console > Project Settings > General
+# - Copie as credenciais do seu projeto Firebase
+# - Cole no arquivo .env substituindo os valores de exemplo
+#
+# NUNCA COMMITE O ARQUIVO .env NO GIT!
+# O arquivo .env está no .gitignore para sua segurança
+
+# 4. Inicie o projeto
 npx expo start
 ```
 
@@ -163,7 +175,7 @@ Escaneie o QR code com o aplicativo Expo Go no seu celular para testar a aplica�
 
 ## Estrutura de Pastas
 
-```
+```text
 SentinelTrack-app/
 ├── assets/                          # Recursos estáticos (ícones, imagens)
 ├── components/                      # Componentes reutilizáveis

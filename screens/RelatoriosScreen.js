@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useCallback, useContext, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
-  Alert,
   RefreshControl,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,12 +25,39 @@ export default function RelatoriosScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Carrega ao abrir e quando filtros mudarem (auto)
+  // Debounce timer ref
+  const debounceTimer = useRef(null);
+
+  // Carrega ao abrir e quando filtros mudarem (com debounce)
   useEffect(() => {
-    carregarRegistros();
+    // Limpar timer anterior
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    // Setor não precisa de debounce (é um click)
+    // Placa e data precisam de debounce (são digitação)
+    const needsDebounce = placa || data;
+
+    if (needsDebounce) {
+      // Aguardar 500ms após parar de digitar
+      debounceTimer.current = setTimeout(() => {
+        carregarRegistros();
+      }, 500);
+    } else {
+      // Sem debounce para mudança de setor
+      carregarRegistros();
+    }
+
+    // Cleanup
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
   }, [setor, placa, data]);
 
-  const carregarRegistros = async () => {
+  const carregarRegistros = useCallback(async () => {
     try {
       setLoading(true);
       const dados = await AsyncStorage.getItem('motos');
@@ -50,12 +76,12 @@ export default function RelatoriosScreen() {
 
       setRegistros(filtrados);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível carregar os dados.');
+      console.error('Error loading data:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [setor, placa, data]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

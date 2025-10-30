@@ -18,5 +18,6 @@
     }
   },
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", ".expo", "android", "ios", "dist", "build"]
+  "exclude": ["node_modules", ".expo", "android", "ios", "dist", "build"],
+  "extends": "expo/tsconfig.base"
 }

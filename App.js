@@ -1,11 +1,10 @@
-// App.js
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { signOut } from 'firebase/auth';
-import { auth } from './screens/../services/firebaseConfig';
+import { auth } from './services/firebaseConfig';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import DashboardScreen from './screens/DashboardScreen';
@@ -13,172 +12,20 @@ import CadastroMotoScreen from './screens/CadastroMotoScreen';
 import RelatoriosScreen from './screens/RelatoriosScreen';
 import AboutScreen from './screens/AboutScreen';
 import MotorcycleManagementScreen from './screens/MotorcycleManagementScreen';
-
-// Importações para i18n e notificações
-import i18n, {
-  setupI18n,
-  changeLanguage,
-  getCurrentLanguage,
-  getAvailableLanguages,
-} from './services/i18n';
+import CustomDrawerContent from './components/CustomDrawerContent';
+import { setupI18n } from './services/i18n_clean';
 import { registerForPushNotificationsAsync } from './services/notificationService';
 import * as Notifications from 'expo-notifications';
-
 import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
-
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-} from '@react-navigation/drawer';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Switch,
-  Image,
-  Alert,
-} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Platform } from 'react-native';
+import i18n from './services/i18n_clean';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-function CustomDrawerContent(props) {
-  const { usuario, onLogout, toggleTheme, theme } = props;
-  const [currentLanguage, setCurrentLanguage] = useState(getCurrentLanguage());
-  const isDark = (theme?.background ?? '#000') !== '#fff';
-
-  const handleLanguageChange = async language => {
-    await changeLanguage(language);
-    setCurrentLanguage(language);
-    // Força re-render do app
-    props.navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
-    });
-  };
-
-  return (
-    <DrawerContentScrollView
-      {...props}
-      contentContainerStyle={[
-        styles.drawerContainer,
-        { backgroundColor: theme.background },
-      ]}
-    >
-      {/* Cabeçalho com avatar e nome */}
-      <View style={[styles.header, { backgroundColor: theme.inputBackground }]}>
-        <Image
-          source={{
-            uri:
-              'https://ui-avatars.com/api/?name=' +
-              encodeURIComponent(
-                usuario?.displayName || usuario?.email || 'U'
-              ) +
-              '&background=111111&color=B6FF00',
-          }}
-          style={styles.avatar}
-        />
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.headerTitle, { color: theme.text }]}>
-            {usuario?.displayName || 'Bem-vindo!'}
-          </Text>
-          <Text style={[styles.headerSubtitle, { color: theme.text }]}>
-            {usuario?.email}
-          </Text>
-        </View>
-      </View>
-
-      {/* Lista padrão de telas */}
-      <View style={{ flex: 1, paddingTop: 6 }}>
-        <DrawerItemList {...props} />
-      </View>
-
-      {/* Ações rápidas no rodapé */}
-      <View style={styles.footer}>
-        {/* Seletor de idioma */}
-        <View
-          style={[styles.rowButton, { backgroundColor: theme.inputBackground }]}
-        >
-          <View style={styles.rowLeft}>
-            <Ionicons
-              name="language"
-              size={22}
-              color={theme.primary}
-              style={{ marginRight: 10 }}
-            />
-            <Text style={[styles.rowText, { color: theme.text }]}>Idioma</Text>
-          </View>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={currentLanguage}
-              onValueChange={handleLanguageChange}
-              style={[styles.picker, { color: theme.text }]}
-              dropdownIconColor={theme.text}
-            >
-              <Picker.Item label="Português" value="pt" />
-              <Picker.Item label="Español" value="es" />
-            </Picker>
-          </View>
-        </View>
-
-        {/* Alternar tema */}
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={toggleTheme}
-          style={[styles.rowButton, { backgroundColor: theme.inputBackground }]}
-        >
-          <View style={styles.rowLeft}>
-            <Ionicons
-              name={isDark ? 'moon' : 'sunny'}
-              size={22}
-              color={theme.primary}
-              style={{ marginRight: 10 }}
-            />
-            <Text style={[styles.rowText, { color: theme.text }]}>
-              {isDark ? i18n.t('theme.darkTheme') : i18n.t('theme.lightTheme')}
-            </Text>
-          </View>
-          <Switch
-            value={isDark}
-            onValueChange={toggleTheme}
-            thumbColor={isDark ? theme.primary : '#e5e5e5'}
-            trackColor={{ false: '#9e9e9e', true: '#3d3d3d' }}
-          />
-        </TouchableOpacity>
-
-        {/* Sair */}
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={props.onLogout}
-          style={[styles.rowButton, { backgroundColor: theme.inputBackground }]}
-        >
-          <View style={styles.rowLeft}>
-            <MaterialCommunityIcons
-              name="logout"
-              size={22}
-              color="#F44336"
-              style={{ marginRight: 10 }}
-            />
-            <Text style={[styles.rowText, { color: theme.text }]}>
-              {i18n.t('auth.logout')}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={18} color={theme.text} />
-        </TouchableOpacity>
-      </View>
-    </DrawerContentScrollView>
-  );
-}
-
 /** =========== Drawer com ícones nas telas =========== */
-function AppDrawer({ usuario, onLogout }) {
-  const { theme, toggleTheme } = useContext(ThemeContext);
-
+function AppDrawer({ usuario, onLogout, theme, toggleTheme }) {
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -246,7 +93,7 @@ function AppDrawer({ usuario, onLogout }) {
               color={color}
             />
           ),
-          title: 'Gerenciar Motos',
+          title: i18n.t('management.title'),
         }}
       />
       <Drawer.Screen
@@ -281,11 +128,12 @@ function AuthStack({ handleLoginSuccess }) {
   );
 }
 
-/** =========== App Root =========== */
-export default function App() {
+/** =========== App Root Component (within ThemeProvider) =========== */
+function AppRoot() {
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [expoPushToken, setExpoPushToken] = useState('');
+  const [_expoPushToken, setExpoPushToken] = useState(null);
   const notificationListener = useRef();
   const responseListener = useRef();
 
@@ -296,20 +144,24 @@ export default function App() {
         // Configurar i18n
         await setupI18n();
 
-        // Registrar para notificações push
-        const token = await registerForPushNotificationsAsync();
-        setExpoPushToken(token);
+        // Registrar para notificações push (apenas em dispositivos móveis)
+        if (Platform.OS !== 'web') {
+          const token = await registerForPushNotificationsAsync();
+          setExpoPushToken(token);
+        }
 
-        // Configurar listeners de notificação
-        notificationListener.current =
-          Notifications.addNotificationReceivedListener(notification => {
-            console.log('Notification received:', notification);
-          });
+        // Configurar listeners de notificação (apenas em dispositivos móveis)
+        if (Platform.OS !== 'web') {
+          notificationListener.current =
+            Notifications.addNotificationReceivedListener(_notification => {
+              // Notificação recebida
+            });
 
-        responseListener.current =
-          Notifications.addNotificationResponseReceivedListener(response => {
-            console.log('Notification response:', response);
-          });
+          responseListener.current =
+            Notifications.addNotificationResponseReceivedListener(_response => {
+              // Resposta de notificação recebida
+            });
+        }
 
         // Restaurar sessão do usuário
         const user = await AsyncStorage.getItem('usuarioLogado');
@@ -351,7 +203,9 @@ export default function App() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-    } catch (e) {}
+    } catch {
+      // Erro ao fazer logout do Firebase (ignorado)
+    }
     await AsyncStorage.removeItem('usuarioLogado');
     setUsuario(null);
   };
@@ -359,72 +213,26 @@ export default function App() {
   if (loading) return null;
 
   return (
-    <ThemeProvider>
-      <NavigationContainer>
-        {usuario ? (
-          <AppDrawer usuario={usuario} onLogout={handleLogout} />
-        ) : (
-          <AuthStack handleLoginSuccess={handleLoginSuccess} />
-        )}
-      </NavigationContainer>
-    </ThemeProvider>
+    <NavigationContainer>
+      {usuario ? (
+        <AppDrawer
+          usuario={usuario}
+          onLogout={handleLogout}
+          theme={theme}
+          toggleTheme={toggleTheme}
+        />
+      ) : (
+        <AuthStack handleLoginSuccess={handleLoginSuccess} />
+      )}
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  drawerContainer: {
-    flex: 1,
-  },
-  header: {
-    margin: 12,
-    marginBottom: 8,
-    padding: 14,
-    borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    marginRight: 12,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  headerSubtitle: {
-    fontSize: 13,
-    opacity: 0.8,
-  },
-  footer: {
-    paddingHorizontal: 12,
-    paddingBottom: 16,
-    gap: 10,
-  },
-  rowButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-  rowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  rowText: {
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  pickerContainer: {
-    width: 120,
-    height: 40,
-  },
-  picker: {
-    width: '100%',
-    height: '100%',
-  },
-});
+/** =========== App Root (wrapper with ThemeProvider) =========== */
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppRoot />
+    </ThemeProvider>
+  );
+}

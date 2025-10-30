@@ -36,9 +36,24 @@
     "invalidEmail": "Correo electrónico inválido",
     "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
     "passwordsDontMatch": "Las contraseñas no coinciden",
+    "passwordsDontMatch2": "Las contraseñas no coinciden",
     "emailRequired": "El correo electrónico es obligatorio",
     "passwordRequired": "La contraseña es obligatoria",
-    "nameRequired": "El nombre es obligatorio"
+    "nameRequired": "El nombre es obligatorio",
+    "emailAlreadyInUse": "Este correo ya está en uso",
+    "emailAlreadyInUseTitle": "Correo en uso",
+    "goToLogin": "Ir a Iniciar Sesión",
+    "forgotPasswordAction": "Olvidé mi contraseña",
+    "emailSent": "Correo enviado",
+    "checkEmailReset": "Verifique su correo para restablecer la contraseña",
+    "errorSendingReset": "No se pudo enviar el correo de recuperación",
+    "invalidEmailError": "Correo inválido. Verifique e intente nuevamente",
+    "weakPassword": "La contraseña es débil. Use al menos 6 caracteres",
+    "registrationError": "No se pudo registrar",
+    "loginErrorGeneric": "Error al iniciar sesión",
+    "registering": "Registrando...",
+    "loggingIn": "Iniciando sesión...",
+    "back": "Volver"
   },
   "navigation": {
     "dashboard": "Panel de Control",
@@ -56,7 +71,15 @@
     "sectorA": "Sector A",
     "sectorB": "Sector B",
     "sectorC": "Sector C",
-    "noData": "No hay datos disponibles"
+    "noData": "No hay datos disponibles",
+    "overview": "Vista general de ocupación",
+    "lastUpdated": "Actualizado",
+    "sector": "Sector",
+    "free": "Libre",
+    "occupied": "Ocupado",
+    "noPlate": "Sin placa",
+    "motorcyclesInSector": "Motos en el sector",
+    "freeSpots": "Espacios libres"
   },
   "motorcycles": {
     "title": "Registro de Motos",
@@ -100,7 +123,8 @@
   "theme": {
     "lightTheme": "Tema Claro",
     "darkTheme": "Tema Oscuro",
-    "systemTheme": "Tema del Sistema"
+    "systemTheme": "Tema del Sistema",
+    "toggle": "Alternar Tema"
   },
   "about": {
     "title": "Acerca de la App",
@@ -110,12 +134,57 @@
     "commitHash": "Hash del Commit",
     "developers": "Desarrolladores",
     "contact": "Contacto",
-    "license": "Licencia"
+    "license": "Licencia",
+    "appInfo": "Información de la App",
+    "projectInfo": "Sobre el Proyecto",
+    "projectDescription": "SentinelTrack es una aplicación móvil desarrollada como parte del Challenge FIAP 2025 - 2º Semestre. La app permite gestionar motocicletas en patios logísticos, con funcionalidades de registro, visualización en dashboard y generación de informes.",
+    "techUsed": "Tecnologías Utilizadas:",
+    "copyright": "© 2025 FIAP - Todos los derechos reservados",
+    "success": "Éxito",
+    "hashCopied": "Hash copiado al portapapeles",
+    "error": "Error",
+    "couldNotCopy": "No se pudo copiar el hash"
   },
   "notifications": {
     "newMotorcycle": "Nueva moto registrada",
     "motorcycleRemoved": "Moto removida del patio",
     "spotAvailable": "Espacio disponible",
     "maintenanceReminder": "Recordatorio de mantenimiento"
+  },
+  "management": {
+    "title": "Gestionar Motos",
+    "confirmDelete": "Confirmar Eliminación",
+    "deleteMessage": "¿Desea realmente eliminar la moto",
+    "moveMotorcycle": "Mover Moto",
+    "selectNewSector": "Seleccione el nuevo sector:",
+    "movedSuccess": "¡Moto movida con éxito!",
+    "noOtherSectors": "No hay otros sectores disponibles",
+    "warning": "Advertencia",
+    "motorcycleMovedSuccess": "¡Moto movida con éxito!",
+    "errorMovingMotorcycle": "Error al mover moto",
+    "errorDeletingMotorcycle": "Error al eliminar moto",
+    "errorLoadingData": "Error al cargar datos",
+    "noMotorcyclesRegistered": "Ninguna moto registrada",
+    "sectorRequired": "El sector es obligatorio"
+  },
+  "cadastro": {
+    "title": "Registro de Moto",
+    "subtitle": "Elija el sector, seleccione un espacio libre e informe la placa.",
+    "sector": "Sector",
+    "plate": "Placa",
+    "platePlaceholder": "Digite la placa (opcional)",
+    "sectorsVacancies": "Espacios del sector",
+    "clear": "Limpiar",
+    "register": "Registrar",
+    "saving": "Guardando...",
+    "selectVacancy": "Seleccione un espacio libre antes de registrar.",
+    "noVacancies": "Ningún espacio registrado en el sector {setor}.",
+    "vacancyOccupied": "Ese espacio está ocupado. Elija otro espacio.",
+    "sectorNotFound": "Sector seleccionado no encontrado.",
+    "sectorWithoutId": "Sector sin ID válido.",
+    "registerError": "Error al registrar",
+    "serverError": "Fallo al enviar al servidor.",
+    "occupied": "Ocupado",
+    "free": "Libre"
   }
 }

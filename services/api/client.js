@@ -1,12 +1,25 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
-const LOCAL_PC_IP = '192.168.10.212'; // IP da sua máquina na rede
-const PORT = 5167;
+// Pega a URL base do ambiente ou usa um fallback
+const getBaseURL = () => {
+  // Primeiro tenta pegar das variáveis de ambiente
+  const envBaseUrl =
+    Constants.expoConfig?.extra?.EXPO_PUBLIC_API_BASE_URL ||
+    process.env.EXPO_PUBLIC_API_BASE_URL;
 
-function getBaseURL() {
+  if (envBaseUrl) {
+    return `${envBaseUrl}/api`;
+  }
+
+  // Fallback para desenvolvimento local
+  const PORT =
+    Constants.expoConfig?.extra?.EXPO_PUBLIC_API_PORT ||
+    process.env.EXPO_PUBLIC_API_PORT ||
+    5167;
+
   if (Platform.OS === 'web') {
-    // Browser sempre acessa via localhost
     return `http://localhost:${PORT}/api`;
   }
 
@@ -16,13 +29,13 @@ function getBaseURL() {
   }
 
   if (Platform.OS === 'ios') {
-    // Simulador iOS entende localhost, mas dispositivo físico precisa do IP da rede
-    return `http://${LOCAL_PC_IP}:${PORT}/api`;
+    // Simulador iOS entende localhost
+    return `http://localhost:${PORT}/api`;
   }
 
-  // Dispositivo físico Android (quando não é emulador) ou fallback
-  return `http://${LOCAL_PC_IP}:${PORT}/api`;
-}
+  // Fallback final
+  return `http://localhost:${PORT}/api`;
+};
 
 export const api = axios.create({
   baseURL: getBaseURL(),

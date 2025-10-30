@@ -32,7 +32,7 @@ import {
   validateBrazilianLicensePlate,
   validateYear,
 } from '../services/api/validators';
-import i18n from '../services/i18n';
+import i18n from '../services/i18n_clean';
 
 export default function MotorcycleManagementScreen() {
   const { theme } = useContext(ThemeContext);
@@ -70,7 +70,10 @@ export default function MotorcycleManagementScreen() {
       setSectors(sectorsData);
     } catch (error) {
       console.error('Error loading data:', error);
-      Alert.alert(i18n.t('common.error'), 'Erro ao carregar dados');
+      Alert.alert(
+        i18n.t('common.error'),
+        i18n.t('management.errorLoadingData')
+      );
     } finally {
       setLoading(false);
     }
@@ -147,7 +150,7 @@ export default function MotorcycleManagementScreen() {
 
     // Validar setor
     if (!formData.sectorId) {
-      Alert.alert(i18n.t('common.error'), 'Setor é obrigatório');
+      Alert.alert(i18n.t('common.error'), i18n.t('management.sectorRequired'));
       return false;
     }
 
@@ -204,8 +207,8 @@ export default function MotorcycleManagementScreen() {
 
   const handleDelete = motorcycle => {
     Alert.alert(
-      'Confirmar Exclusão',
-      `Deseja realmente excluir a moto ${motorcycle.licensePlate}?`,
+      i18n.t('management.confirmDelete'),
+      `${i18n.t('management.deleteMessage')} ${motorcycle.licensePlate}?`,
       [
         { text: i18n.t('common.cancel'), style: 'cancel' },
         {
@@ -231,7 +234,10 @@ export default function MotorcycleManagementScreen() {
               await loadData();
             } catch (error) {
               console.error('Error deleting motorcycle:', error);
-              Alert.alert(i18n.t('common.error'), 'Erro ao excluir moto');
+              Alert.alert(
+                i18n.t('common.error'),
+                i18n.t('management.errorDeletingMotorcycle')
+              );
             } finally {
               setLoading(false);
             }
@@ -245,13 +251,16 @@ export default function MotorcycleManagementScreen() {
     const availableSectors = sectors.filter(s => s.id !== motorcycle.sectorId);
 
     if (availableSectors.length === 0) {
-      Alert.alert('Aviso', 'Não há outros setores disponíveis');
+      Alert.alert(
+        i18n.t('management.warning'),
+        i18n.t('management.noOtherSectors')
+      );
       return;
     }
 
     Alert.alert(
-      'Mover Moto',
-      'Selecione o novo setor:',
+      i18n.t('management.moveMotorcycle'),
+      i18n.t('management.selectNewSector'),
       availableSectors
         .map(sector => ({
           text: sector.name,
@@ -265,11 +274,17 @@ export default function MotorcycleManagementScreen() {
                 'Nova localização'
               );
 
-              Alert.alert(i18n.t('common.success'), 'Moto movida com sucesso!');
+              Alert.alert(
+                i18n.t('common.success'),
+                i18n.t('management.motorcycleMovedSuccess')
+              );
               await loadData();
             } catch (error) {
               console.error('Error moving motorcycle:', error);
-              Alert.alert(i18n.t('common.error'), 'Erro ao mover moto');
+              Alert.alert(
+                i18n.t('common.error'),
+                i18n.t('management.errorMovingMotorcycle')
+              );
             } finally {
               setLoading(false);
             }
@@ -348,7 +363,7 @@ export default function MotorcycleManagementScreen() {
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.inputBackground }]}>
         <Text style={[styles.headerTitle, { color: theme.text }]}>
-          Gerenciar Motos
+          {i18n.t('management.title')}
         </Text>
         <TouchableOpacity
           style={[styles.addButton, { backgroundColor: theme.primary }]}
@@ -381,7 +396,7 @@ export default function MotorcycleManagementScreen() {
               style={{ opacity: 0.3 }}
             />
             <Text style={[styles.emptyText, { color: theme.text }]}>
-              Nenhuma moto cadastrada
+              {i18n.t('management.noMotorcyclesRegistered')}
             </Text>
           </View>
         }
