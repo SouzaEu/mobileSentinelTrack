@@ -23,7 +23,7 @@ export default function LoginScreen({ onLoginSuccess, route }) {
 
   const handleLogin = async () => {
     if (isLoading) return;
-    ErrorHandler.log(`Clique no login: ${email}`,'Login');
+    ErrorHandler.log(`Clique no login: ${email}`, 'Login');
     setIsLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -31,7 +31,10 @@ export default function LoginScreen({ onLoginSuccess, route }) {
         email.trim(),
         senha
       );
-      ErrorHandler.log(`Sucesso no login: ${userCredential.user.email}`, 'Login');
+      ErrorHandler.log(
+        `Sucesso no login: ${userCredential.user.email}`,
+        'Login'
+      );
       const user = userCredential.user;
       onLoginSuccess?.(user);
     } catch (error) {
@@ -94,7 +97,10 @@ export default function LoginScreen({ onLoginSuccess, route }) {
       </View>
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: isLoading ? '#999' : theme.primary }]}
+        style={[
+          styles.button,
+          { backgroundColor: isLoading ? '#999' : theme.primary },
+        ]}
         onPress={handleLogin}
         disabled={isLoading}
       >
@@ -116,13 +122,15 @@ export default function LoginScreen({ onLoginSuccess, route }) {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={toggleTheme} style={styles.themeToggle}>
-        <Ionicons 
-          name={theme.background === '#FFFFFF' ? 'moon' : 'sunny'} 
-          size={20} 
-          color={theme.text} 
+        <Ionicons
+          name={theme.background === '#FFFFFF' ? 'moon' : 'sunny'}
+          size={20}
+          color={theme.text}
         />
         <Text style={[styles.themeText, { color: theme.text }]}>
-          {theme.background === '#FFFFFF' ? i18n.t('theme.darkTheme') : i18n.t('theme.lightTheme')}
+          {theme.background === '#FFFFFF'
+            ? i18n.t('theme.darkTheme')
+            : i18n.t('theme.lightTheme')}
         </Text>
       </TouchableOpacity>
     </View>

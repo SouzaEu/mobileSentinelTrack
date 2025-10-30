@@ -8,10 +8,14 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from 'firebase/auth';
 import { auth } from '../services/firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../contexts/ThemeContext';
+import ErrorHandler from '../services/errorHandler';
 import i18n from '../services/i18n_clean';
 
 export default function RegisterScreen({ onRegisterSuccess }) {
@@ -44,7 +48,7 @@ export default function RegisterScreen({ onRegisterSuccess }) {
 
     setIsLoading(true);
     try {
-  ErrorHandler.log(`Tentativa de cadastro: ${trimmedEmail}`,'Register');
+      ErrorHandler.log(`Tentativa de cadastro: ${trimmedEmail}`, 'Register');
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         trimmedEmail,
@@ -61,37 +65,47 @@ export default function RegisterScreen({ onRegisterSuccess }) {
       ErrorHandler.log(error, 'Register');
       const code = error?.code || error?.message || '';
       // Handle common Firebase errors with friendlier messages
-        if (code.includes('auth/email-already-in-use')) {
-          Alert.alert(
-            i18n.t('auth.emailAlreadyInUseTitle'),
-            i18n.t('auth.emailAlreadyInUse'),
-            [
-              {
-                text: i18n.t('auth.goToLogin'),
-                onPress: () => navigation.navigate('Login', { email: email.trim() }),
+      if (code.includes('auth/email-already-in-use')) {
+        Alert.alert(
+          i18n.t('auth.emailAlreadyInUseTitle'),
+          i18n.t('auth.emailAlreadyInUse'),
+          [
+            {
+              text: i18n.t('auth.goToLogin'),
+              onPress: () =>
+                navigation.navigate('Login', { email: email.trim() }),
+            },
+            {
+              text: i18n.t('auth.forgotPasswordAction'),
+              onPress: async () => {
+                try {
+                  await sendPasswordResetEmail(auth, email.trim());
+                  Alert.alert(
+                    i18n.t('auth.emailSent'),
+                    i18n.t('auth.checkEmailReset')
+                  );
+                } catch (resetError) {
+                  console.error('Erro enviando reset:', resetError);
+                  Alert.alert(
+                    i18n.t('common.error'),
+                    resetError?.message || i18n.t('auth.errorSendingReset')
+                  );
+                }
               },
-              {
-                text: i18n.t('auth.forgotPasswordAction'),
-                onPress: async () => {
-                  try {
-                    await sendPasswordResetEmail(auth, email.trim());
-                    Alert.alert(i18n.t('auth.emailSent'), i18n.t('auth.checkEmailReset'));
-                  } catch (resetError) {
-                    console.error('Erro enviando reset:', resetError);
-                    Alert.alert(i18n.t('common.error'), resetError?.message || i18n.t('auth.errorSendingReset'));
-                  }
-                },
-              },
-              { text: i18n.t('common.cancel'), style: 'cancel' },
-            ],
-            { cancelable: true }
-          );
+            },
+            { text: i18n.t('common.cancel'), style: 'cancel' },
+          ],
+          { cancelable: true }
+        );
       } else if (code.includes('auth/invalid-email')) {
         Alert.alert(i18n.t('common.error'), i18n.t('auth.invalidEmailError'));
       } else if (code.includes('auth/weak-password')) {
         Alert.alert(i18n.t('common.error'), i18n.t('auth.weakPassword'));
       } else {
-        Alert.alert(i18n.t('common.error'), error?.message || i18n.t('auth.registrationError'));
+        Alert.alert(
+          i18n.t('common.error'),
+          error?.message || i18n.t('auth.registrationError')
+        );
       }
     } finally {
       setIsLoading(false);
@@ -105,11 +119,14 @@ export default function RegisterScreen({ onRegisterSuccess }) {
       {/* Botão para voltar ao Login */}
       <TouchableOpacity style={styles.backBtn} onPress={goToLogin}>
         <Ionicons name="arrow-back" size={22} color={theme.text} />
-        <Text style={[styles.backText, { color: theme.text }]}>{i18n.t('auth.back')}</Text>
+        <Text style={[styles.backText, { color: theme.text }]}>
+          {i18n.t('auth.back')}
+        </Text>
       </TouchableOpacity>
 
       <Text style={[styles.logo, { color: theme.text }]}>
-        S<Text style={{ color: theme.primary }}>T</Text> - {i18n.t('auth.register')}
+        S<Text style={{ color: theme.primary }}>T</Text> -{' '}
+        {i18n.t('auth.register')}
       </Text>
 
       <View
