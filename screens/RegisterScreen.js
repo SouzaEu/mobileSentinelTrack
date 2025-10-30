@@ -8,35 +8,49 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../services/firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../contexts/ThemeContext';
+import i18n from '../services/i18n_clean';
 
 export default function RegisterScreen({ onRegisterSuccess }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmSenha, setConfirmSenha] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
   const { theme } = useContext(ThemeContext);
 
   const handleRegister = async () => {
-    console.log('Botão pressionado!');
-    console.log('Tentando cadastro com:', email);
+    if (isLoading) return; // prevent double submits
 
-    if (senha !== confirmSenha) {
-      Alert.alert('Erro', 'As senhas não coincidem.');
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      Alert.alert('Erro', 'O e-mail não pode estar vazio.');
       return;
     }
 
+    const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      Alert.alert('Erro', 'Por favor, insira um e-mail válido.');
+      return;
+    }
+
+    if (senha !== confirmSenha) {
+      Alert.alert(i18n.t('common.error'), i18n.t('auth.passwordsDontMatch2'));
+      return;
+    }
+
+    setIsLoading(true);
     try {
+  ErrorHandler.log(`Tentativa de cadastro: ${trimmedEmail}`,'Register');
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        email.trim(),
+        trimmedEmail,
         senha
       );
       const user = userCredential.user;
-      console.log('Cadastro bem-sucedido:', user.uid);
 
       onRegisterSuccess &&
         onRegisterSuccess({
@@ -44,8 +58,43 @@ export default function RegisterScreen({ onRegisterSuccess }) {
           email: user.email,
         });
     } catch (error) {
-      console.error('Erro no cadastro:', error);
-      Alert.alert('Erro', error?.message || 'Não foi possível cadastrar.');
+      ErrorHandler.log(error, 'Register');
+      const code = error?.code || error?.message || '';
+      // Handle common Firebase errors with friendlier messages
+        if (code.includes('auth/email-already-in-use')) {
+          Alert.alert(
+            i18n.t('auth.emailAlreadyInUseTitle'),
+            i18n.t('auth.emailAlreadyInUse'),
+            [
+              {
+                text: i18n.t('auth.goToLogin'),
+                onPress: () => navigation.navigate('Login', { email: email.trim() }),
+              },
+              {
+                text: i18n.t('auth.forgotPasswordAction'),
+                onPress: async () => {
+                  try {
+                    await sendPasswordResetEmail(auth, email.trim());
+                    Alert.alert(i18n.t('auth.emailSent'), i18n.t('auth.checkEmailReset'));
+                  } catch (resetError) {
+                    console.error('Erro enviando reset:', resetError);
+                    Alert.alert(i18n.t('common.error'), resetError?.message || i18n.t('auth.errorSendingReset'));
+                  }
+                },
+              },
+              { text: i18n.t('common.cancel'), style: 'cancel' },
+            ],
+            { cancelable: true }
+          );
+      } else if (code.includes('auth/invalid-email')) {
+        Alert.alert(i18n.t('common.error'), i18n.t('auth.invalidEmailError'));
+      } else if (code.includes('auth/weak-password')) {
+        Alert.alert(i18n.t('common.error'), i18n.t('auth.weakPassword'));
+      } else {
+        Alert.alert(i18n.t('common.error'), error?.message || i18n.t('auth.registrationError'));
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,11 +105,11 @@ export default function RegisterScreen({ onRegisterSuccess }) {
       {/* Botão para voltar ao Login */}
       <TouchableOpacity style={styles.backBtn} onPress={goToLogin}>
         <Ionicons name="arrow-back" size={22} color={theme.text} />
-        <Text style={[styles.backText, { color: theme.text }]}>Voltar</Text>
+        <Text style={[styles.backText, { color: theme.text }]}>{i18n.t('auth.back')}</Text>
       </TouchableOpacity>
 
       <Text style={[styles.logo, { color: theme.text }]}>
-        S<Text style={{ color: theme.primary }}>X</Text> - Cadastro
+        S<Text style={{ color: theme.primary }}>T</Text> - {i18n.t('auth.register')}
       </Text>
 
       <View
@@ -76,7 +125,7 @@ export default function RegisterScreen({ onRegisterSuccess }) {
           style={styles.icon}
         />
         <TextInput
-          placeholder="Email"
+          placeholder={i18n.t('auth.email')}
           style={[styles.input, { color: theme.text }]}
           placeholderTextColor={theme.text}
           value={email}
@@ -99,7 +148,7 @@ export default function RegisterScreen({ onRegisterSuccess }) {
           style={styles.icon}
         />
         <TextInput
-          placeholder="Senha"
+          placeholder={i18n.t('auth.password')}
           style={[styles.input, { color: theme.text }]}
           placeholderTextColor={theme.text}
           secureTextEntry
@@ -121,7 +170,7 @@ export default function RegisterScreen({ onRegisterSuccess }) {
           style={styles.icon}
         />
         <TextInput
-          placeholder="Confirmar Senha"
+          placeholder={i18n.t('auth.confirmPassword')}
           style={[styles.input, { color: theme.text }]}
           placeholderTextColor={theme.text}
           secureTextEntry
@@ -131,11 +180,15 @@ export default function RegisterScreen({ onRegisterSuccess }) {
       </View>
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.primary }]}
+        style={[
+          styles.button,
+          { backgroundColor: isLoading ? '#999' : theme.primary },
+        ]}
         onPress={handleRegister}
+        disabled={isLoading}
       >
         <Text style={[styles.buttonText, { color: theme.background }]}>
-          Cadastrar
+          {isLoading ? i18n.t('auth.registering') : i18n.t('auth.register')}
         </Text>
       </TouchableOpacity>
     </View>

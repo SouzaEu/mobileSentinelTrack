@@ -5,31 +5,40 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../services/firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../contexts/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import ErrorHandler from '../services/errorHandler';
+import i18n from '../services/i18n_clean';
 
-export default function LoginScreen({ onLoginSuccess }) {
-  const { theme } = useContext(ThemeContext);
-  const [email, setEmail] = useState('');
+export default function LoginScreen({ onLoginSuccess, route }) {
+  const { theme, toggleTheme } = useContext(ThemeContext);
+  const [email, setEmail] = useState(route?.params?.email || '');
   const [senha, setSenha] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
   const handleLogin = async () => {
+    if (isLoading) return;
+    ErrorHandler.log(`Clique no login: ${email}`,'Login');
+    setIsLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
-        email,
+        email.trim(),
         senha
       );
+      ErrorHandler.log(`Sucesso no login: ${userCredential.user.email}`, 'Login');
       const user = userCredential.user;
-
       onLoginSuccess?.(user);
     } catch (error) {
-      Alert.alert('Erro', 'Falha no login');
+      ErrorHandler.log(error, 'Login');
+      ErrorHandler.showAlert(error, i18n.t('auth.loginErrorGeneric'));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,7 +61,7 @@ export default function LoginScreen({ onLoginSuccess }) {
           style={styles.icon}
         />
         <TextInput
-          placeholder="Email"
+          placeholder={i18n.t('auth.email')}
           style={[styles.input, { color: theme.text }]}
           placeholderTextColor={theme.text}
           value={email}
@@ -75,7 +84,7 @@ export default function LoginScreen({ onLoginSuccess }) {
           style={styles.icon}
         />
         <TextInput
-          placeholder="Senha"
+          placeholder={i18n.t('auth.password')}
           style={[styles.input, { color: theme.text }]}
           placeholderTextColor={theme.text}
           secureTextEntry
@@ -85,28 +94,36 @@ export default function LoginScreen({ onLoginSuccess }) {
       </View>
 
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.primary }]}
+        style={[styles.button, { backgroundColor: isLoading ? '#999' : theme.primary }]}
         onPress={handleLogin}
+        disabled={isLoading}
       >
         <Text style={[styles.buttonText, { color: theme.background }]}>
-          Login
+          {isLoading ? i18n.t('auth.loggingIn') : i18n.t('auth.login')}
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity>
         <Text style={[styles.forgot, { color: theme.text }]}>
-          Esqueceu sua senha?
+          {i18n.t('auth.forgotPassword')}
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
         <Text style={[styles.register, { color: theme.primary }]}>
-          Criar conta
+          {i18n.t('auth.dontHaveAccount')}
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={toggleTheme}>
-        <Text style={{ color: theme.text }}>Alternar Tema</Text>
+      <TouchableOpacity onPress={toggleTheme} style={styles.themeToggle}>
+        <Ionicons 
+          name={theme.background === '#FFFFFF' ? 'moon' : 'sunny'} 
+          size={20} 
+          color={theme.text} 
+        />
+        <Text style={[styles.themeText, { color: theme.text }]}>
+          {theme.background === '#FFFFFF' ? i18n.t('theme.darkTheme') : i18n.t('theme.lightTheme')}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -159,5 +176,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 15,
     fontWeight: 'bold',
+  },
+  themeToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    gap: 8,
+  },
+  themeText: {
+    fontSize: 14,
   },
 });
