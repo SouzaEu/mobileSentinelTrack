@@ -12,6 +12,7 @@ import CadastroMotoScreen from './screens/CadastroMotoScreen';
 import RelatoriosScreen from './screens/RelatoriosScreen';
 import AboutScreen from './screens/AboutScreen';
 import MotorcycleManagementScreen from './screens/MotorcycleManagementScreen';
+import IoTDashboardScreen from './screens/IoTDashboardScreen';
 import CustomDrawerContent from './components/CustomDrawerContent';
 import { setupI18n } from './services/i18n_clean';
 import { registerForPushNotificationsAsync } from './services/notificationService';
@@ -94,6 +95,20 @@ function AppDrawer({ usuario, onLogout, theme, toggleTheme }) {
             />
           ),
           title: i18n.t('management.title'),
+        }}
+      />
+      <Drawer.Screen
+        name="Dashboard IoT"
+        component={IoTDashboardScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="router-wireless"
+              size={size}
+              color={color}
+            />
+          ),
+          title: 'Dashboard IoT',
         }}
       />
       <Drawer.Screen

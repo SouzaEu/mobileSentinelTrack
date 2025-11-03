@@ -15,7 +15,9 @@
     "error": "Error",
     "success": "Éxito",
     "warning": "Advertencia",
-    "info": "Información"
+    "info": "Información",
+    "resolve": "Resolver",
+    "not_found": "No encontrado"
   },
   "auth": {
     "login": "Iniciar Sesión",
@@ -186,5 +188,27 @@
     "serverError": "Fallo al enviar al servidor.",
     "occupied": "Ocupado",
     "free": "Libre"
+  },
+  "iot": {
+    "dashboard_title": "Panel IoT",
+    "integration_subtitle": "Integración Multi-disciplinaria",
+    "api_status": "Estado de las APIs",
+    "last_update": "Última actualización",
+    "total_motorcycles": "Total Motos",
+    "available": "Disponibles",
+    "in_use": "En Uso",
+    "devices_online": "Dispositivos Online",
+    "active_alerts": "Alertas Activas",
+    "quick_actions": "Acciones Rápidas",
+    "search_motorcycle": "Buscar Moto",
+    "reports": "Informes",
+    "recent_alerts": "Alertas Recientes",
+    "devices": "Dispositivos IoT",
+    "integration_info": "Integración con Oracle DB, MongoDB y APIs Java/Python",
+    "loading_dashboard": "Cargando Panel IoT...",
+    "error_loading_data": "Error al cargar datos del sistema IoT",
+    "resolve_alert": "Resolver Alerta",
+    "alert_resolved": "Alerta resuelta con éxito",
+    "enter_plate": "Ingrese la placa de la moto:"
   }
 }
