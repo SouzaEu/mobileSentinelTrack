@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#0E1B35"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.fiap.sentineltrack"
@@ -45,18 +47,19 @@
       ]
     ],
     "extra": {
+      "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyBQN9-zZhUAorhl1Y-NLdvye1Wv-BFQ3YY",
+      "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "lynex-2256a.firebaseapp.com",
+      "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "lynex-2256a",
+      "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "lynex-2256a.appspot.com",
+      "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "507213424216",
+      "EXPO_PUBLIC_FIREBASE_APP_ID": "1:507213424216:web:51d71b3a3309e7ff3a4c2d",
+      "EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID": "G-9GDLMQ6B9H",
+      "EXPO_PUBLIC_API_BASE_URL": "http://192.168.10.212:5167",
+      "EXPO_PUBLIC_API_PORT": "5167",
+      "EXPO_PUBLIC_BACKEND_BASE_URL": "http://localhost:5001",
       "eas": {
-        "projectId": "your-eas-project-id"
-      },
-      "EXPO_PUBLIC_FIREBASE_API_KEY": "${EXPO_PUBLIC_FIREBASE_API_KEY}",
-      "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "${EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN}",
-      "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "${EXPO_PUBLIC_FIREBASE_PROJECT_ID}",
-      "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "${EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET}",
-      "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "${EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}",
-      "EXPO_PUBLIC_FIREBASE_APP_ID": "${EXPO_PUBLIC_FIREBASE_APP_ID}",
-      "EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID": "${EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID}",
-      "EXPO_PUBLIC_API_BASE_URL": "${EXPO_PUBLIC_API_BASE_URL}",
-      "EXPO_PUBLIC_API_PORT": "${EXPO_PUBLIC_API_PORT}"
+        "projectId": "799efadb-83d3-4996-b8f5-2ff2aad87007"
+      }
     }
   }
 }

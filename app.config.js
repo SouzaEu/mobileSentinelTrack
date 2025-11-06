@@ -5,10 +5,7 @@ export default ({ config }) => {
     ...config,
     extra: {
       eas: {
-        projectId:
-          process.env.EAS_PROJECT_ID ||
-          (config.extra && config.extra.eas && config.extra.eas.projectId) ||
-          'your-eas-project-id',
+        projectId: process.env.EAS_PROJECT_ID || '799efadb-83d3-4996-b8f5-2ff2aad87007',
       },
       EXPO_PUBLIC_FIREBASE_API_KEY:
         process.env.EXPO_PUBLIC_FIREBASE_API_KEY ||
