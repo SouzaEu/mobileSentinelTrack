@@ -11,7 +11,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
-import { useTranslation } from 'react-i18next';
+import i18n from '../services/i18n_clean';
 import iotService from '../services/api/iot';
 
 const { width } = Dimensions.get('window');
@@ -29,7 +29,6 @@ const { width } = Dimensions.get('window');
  */
 const IoTDashboardScreen = ({ navigation }) => {
   const { theme } = useTheme();
-  const { t } = useTranslation();
 
   // Estados
   const [loading, setLoading] = useState(true);
