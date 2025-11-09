@@ -235,7 +235,7 @@ eas build --platform android --profile preview
 - Bundle ID: com.fiap.sentineltrack
 - App Name: SentinelTrack
 - Version: 1.0.0
-- Commit Hash: 2f7a1dae85b4c90c9b3958febcfa5724fbcaaca5
+- Commit Hash: cb247e32508f8131ccab534794b6c3057f86ea1b
 
 ## Checklist de Entrega Final
 

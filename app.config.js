@@ -5,7 +5,8 @@ export default ({ config }) => {
     ...config,
     extra: {
       eas: {
-        projectId: process.env.EAS_PROJECT_ID || '799efadb-83d3-4996-b8f5-2ff2aad87007',
+        projectId:
+          process.env.EAS_PROJECT_ID || '799efadb-83d3-4996-b8f5-2ff2aad87007',
       },
       EXPO_PUBLIC_FIREBASE_API_KEY:
         process.env.EXPO_PUBLIC_FIREBASE_API_KEY ||
@@ -30,6 +31,8 @@ export default ({ config }) => {
         process.env.EXPO_PUBLIC_BACKEND_BASE_URL || 'http://localhost:5001',
       EXPO_PUBLIC_API_PORT:
         process.env.EXPO_PUBLIC_API_PORT || process.env.API_PORT || 5167,
+      COMMIT_HASH:
+        process.env.COMMIT_HASH || 'cb247e32508f8131ccab534794b6c3057f86ea1b',
     },
   };
 };

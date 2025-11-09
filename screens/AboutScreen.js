@@ -19,7 +19,7 @@ import Constants from 'expo-constants';
 const COMMIT_HASH =
   Constants.expoConfig?.extra?.COMMIT_HASH ||
   process.env.COMMIT_HASH ||
-  '2f7a1dae85b4c90c9b3958febcfa5724fbcaaca5';
+  'cb247e32508f8131ccab534794b6c3057f86ea1b';
 const APP_VERSION = '1.0.0';
 
 const developers = [
